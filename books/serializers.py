@@ -5,7 +5,7 @@ import datetime
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['title','author','publication_date','release_date','description','price','publisher']
+        fields = ['title','author','publication_date','release_date','description','price','publisher','genre']
 
 class BookDonatedSerializer(serializers.ModelSerializer):
     class Meta:

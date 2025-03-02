@@ -16,6 +16,7 @@ class Book(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     publisher = models.CharField(max_length=100)
+    genre = models.JSONField(default=list)
 
     def __str__(self):
         return self.title

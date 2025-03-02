@@ -21,6 +21,13 @@ import datetime
         openapi.Parameter('price', openapi.IN_FORM, type=openapi.TYPE_NUMBER),
         openapi.Parameter('publisher', openapi.IN_FORM, type=openapi.TYPE_STRING),
         openapi.Parameter('description', openapi.IN_FORM, type=openapi.TYPE_STRING),
+        openapi.Parameter(
+                'genre',
+                openapi.IN_FORM,
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Items(type=openapi.TYPE_STRING),
+                description="List of genres for the book"
+            ),
     ],
     responses={
         status.HTTP_201_CREATED: openapi.Response(description='Book created successfully'),
@@ -139,21 +146,24 @@ def new_arival_books(request):
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
 def donate_book(request):
-    book_id = request.data.get('book_id')
-    try:
-        book = Book.objects.get(id=book_id)
-        books_donated = BookDonated.objects.filter(book_id=book_id)
-        if not books_donated.exists():
-            new_donation = BookDonated(book=book, number_of_donated=1)
-            new_donation.save()
-            return Response('Book Donated successfully', status=status.HTTP_201_CREATED)
-        else:
-            books_donated = books_donated.first()
-            books_donated.number_of_donated += 1
-            books_donated.save()
-            return Response('Book Donated successfully', status=status.HTTP_201_CREATED)
-    except Book.DoesNotExist:
-        return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
+    if request.user.is_authenticated:
+        book_id = request.data.get('book_id')
+        try:
+            book = Book.objects.get(id=book_id)
+            books_donated = BookDonated.objects.filter(book_id=book_id)
+            if not books_donated.exists():
+                new_donation = BookDonated(book=book, number_of_donated=1)
+                new_donation.save()
+                return Response('Book Donated successfully', status=status.HTTP_201_CREATED)
+            else:
+                books_donated = books_donated.first()
+                books_donated.number_of_donated += 1
+                books_donated.save()
+                return Response('Book Donated successfully', status=status.HTTP_201_CREATED)
+        except Book.DoesNotExist:
+            return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
+    else:
+        return Response('Authentication required', status=status.HTTP_401_UNAUTHORIZED)
 
 # Borrow Book:
 @swagger_auto_schema(
@@ -161,7 +171,6 @@ def donate_book(request):
     tags=['Books'],
     manual_parameters=[
         openapi.Parameter('book_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER),
-        openapi.Parameter('borrower_name', openapi.IN_FORM, type=openapi.TYPE_STRING),
     ],
     responses={
         status.HTTP_201_CREATED: openapi.Response(description='Book borrowed successfully'),
@@ -171,39 +180,42 @@ def donate_book(request):
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
 def borrow_book(request):
-    book_id = request.data.get('book_id')
-    borrower_name = request.data.get('borrower_name')
-    try:
-        #Check if Book Exist in List of books and Check if person already borrowed or not
-        book = Book.objects.get(id=book_id)
-
-        #Check if User already Borrow or not
+    if request.user.is_authenticated:
+        book_id = request.data.get('book_id')
+        borrower_name = request.user.username
         try:
-            borrower_check = BookBorrowed.objects.get(book_id=book_id, borrower_name=borrower_name, status_borrow='Borrowed')
-            return Response('Book already borrowed by this borrower', status=status.HTTP_400_BAD_REQUEST)
-            
-        except BookBorrowed.DoesNotExist:
+            #Check if Book Exist in List of books and Check if person already borrowed or not
+            book = Book.objects.get(id=book_id)
 
-            #Check if Book is in library or not
+            #Check if User already Borrow or not
             try:
-                get_from_library = BookDonated.objects.get(book_id=book_id)
+                borrower_check = BookBorrowed.objects.get(book_id=book_id, borrower_name=borrower_name, status_borrow='Borrowed')
+                return Response('Book already borrowed by this borrower', status=status.HTTP_400_BAD_REQUEST)
                 
-                #Check if book quota is available or not
-                if get_from_library.number_of_donated > 0:
-                    get_from_library.number_of_donated -= 1
-                    new_borrow = BookBorrowed(book=book, borrower_name=borrower_name)
-                    new_borrow.save()
-                    get_from_library.save()
-                    return Response('Book borrowed successfully', status=status.HTTP_201_CREATED)
-                else:
-                    return Response('Book Quota not available', status=status.HTTP_400_BAD_REQUEST)
+            except BookBorrowed.DoesNotExist:
 
-            except BookDonated.DoesNotExist:
-                return Response('Book not available in Library', status=status.HTTP_400_BAD_REQUEST)
-    
-    #If Book not Exist in List Books
-    except Book.DoesNotExist:
-        return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
+                #Check if Book is in library or not
+                try:
+                    get_from_library = BookDonated.objects.get(book_id=book_id)
+                    
+                    #Check if book quota is available or not
+                    if get_from_library.number_of_donated > 0:
+                        get_from_library.number_of_donated -= 1
+                        new_borrow = BookBorrowed(book=book, borrower_name=borrower_name)
+                        new_borrow.save()
+                        get_from_library.save()
+                        return Response('Book borrowed successfully', status=status.HTTP_201_CREATED)
+                    else:
+                        return Response('Book Quota not available', status=status.HTTP_400_BAD_REQUEST)
+
+                except BookDonated.DoesNotExist:
+                    return Response('Book not available in Library', status=status.HTTP_400_BAD_REQUEST)
+        
+        #If Book not Exist in List Books
+        except Book.DoesNotExist:
+            return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
+    else:
+        return Response('Authentication required', status=status.HTTP_401_UNAUTHORIZED)
     
 # Returned Book
 @swagger_auto_schema(
@@ -211,7 +223,6 @@ def borrow_book(request):
     tags=['Books'],
     manual_parameters=[
         openapi.Parameter('book_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER),
-        openapi.Parameter('borrower_name', openapi.IN_FORM, type=openapi.TYPE_STRING),
     ],
     responses={
         status.HTTP_201_CREATED: openapi.Response(description='Book returned successfully'),
@@ -221,21 +232,24 @@ def borrow_book(request):
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
 def returned_book(request):
-    book_id = request.data.get('book_id')
-    borrower_name = request.data.get('borrower_name')
-    try:
-        book = Book.objects.get(id=book_id)
-
+    if request.user.is_authenticated:
+        book_id = request.data.get('book_id')
+        borrower_name = request.user.username
         try:
-            borrower_check = BookBorrowed.objects.get(book_id=book_id, borrower_name=borrower_name, status_borrow='Borrowed')
-            get_from_library = BookDonated.objects.get(book_id=book_id)
-            borrower_check.status_borrow = 'Returned'
-            get_from_library.number_of_donated += 1
-            borrower_check.save()
-            get_from_library.save()
-            return Response('Book returned successfully', status=status.HTTP_200_OK)
-        except BookBorrowed.DoesNotExist:
-            return Response('Book not borrowed by this borrower', status=status.HTTP_404_NOT_FOUND)
+            book = Book.objects.get(id=book_id)
 
-    except Book.DoesNotExist:
-        return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
+            try:
+                borrower_check = BookBorrowed.objects.get(book_id=book_id, borrower_name=borrower_name, status_borrow='Borrowed')
+                get_from_library = BookDonated.objects.get(book_id=book_id)
+                borrower_check.status_borrow = 'Returned'
+                get_from_library.number_of_donated += 1
+                borrower_check.save()
+                get_from_library.save()
+                return Response('Book returned successfully', status=status.HTTP_200_OK)
+            except BookBorrowed.DoesNotExist:
+                return Response('Book not borrowed by this borrower', status=status.HTTP_404_NOT_FOUND)
+
+        except Book.DoesNotExist:
+            return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
+    else:
+        return Response('Authentication required', status=status.HTTP_401_UNAUTHORIZED)
