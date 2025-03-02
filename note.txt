@@ -1,0 +1,6 @@
+It looks like if the request is post is better to not put id column in serializers, but if it gets its better to put id column in serializers.
+For example, in borrow feature
+get list of borrowed books better to also include the id column for its tickets id when returned, so the process will be simpler because we only need to check the id
+if its valid or not, if yes then the process can be done, but if it is not then the process will be rejected or forbidden
+
+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
