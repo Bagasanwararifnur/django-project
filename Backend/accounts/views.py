@@ -47,7 +47,6 @@ def login_account(request):
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
     if user:
-        # token, _ = Token.objects.get_or_create(user=user)
         login(request,user)
         return Response({'token'}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

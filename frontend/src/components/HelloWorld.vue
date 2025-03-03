@@ -6,22 +6,44 @@ const password = ref('')
 async function submitButton () {
   const url = 'http://127.0.0.1:8000/api/v1/accounts/login'
   const formData = new FormData()
-  formData.append('name', name.value)
+  formData.append('username', name.value)
   formData.append('password', password.value)
-  console.log(formData)
+  // console.log(formData)
   const response = await fetch(url, {
     method: 'POST',
-    body: formData
+    headers: {
+      'accept': 'application/json',
+    },
+    body: formData,
+    credentials: 'include',
+  });
+
+  if (response.ok){
+    const result = await response.json()
+    console.log(result)
+  }
+  else {
+    console.error('Error:', response.status)
+  }
+}
+
+
+async function checkButton () {
+  const url = 'http://127.0.0.1:8000/api/v1/accounts/coba_authentication'
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+    },
+    credentials: 'include',
   })
-  const data = await response.json()
-  console.log(data)
-  // If successful, clear the form and display success message
-  if (data.success) {
-    name.value = ''
-    password.value = ''
-    alert('Login successful!')
-  } else {
-    alert('Invalid credentials!')
+
+  if (response.ok){
+    const result = await response.json()
+    console.log(result)
+  }
+  else {
+    console.error('Error:', response.status)
   }
 }
 
@@ -32,8 +54,10 @@ async function submitButton () {
   <form action="">
     <input type="text" v-model="name" placeholder="Enter your message" />
     <input type="password" v-model="password" placeholder="password">
-    <button @click="submitButton">Increment Count</button>
+    <button @click="submitButton">Submit</button>
   </form>
+
+  <button @click="checkButton">Click Disini</button>
 </template>
 
 <style scoped>

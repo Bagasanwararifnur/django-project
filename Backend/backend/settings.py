@@ -42,11 +42,13 @@ INSTALLED_APPS = [
 
     'drf_yasg',
     'rest_framework',
+    'corsheaders',
     'books',
     'accounts'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # new
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -134,6 +136,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',  # Enable session authentication
     ],
 }
-
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
