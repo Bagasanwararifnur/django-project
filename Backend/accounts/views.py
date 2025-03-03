@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from drf_yasg import openapi 
 from drf_yasg.utils import swagger_auto_schema
 from.models import *
@@ -48,7 +48,7 @@ def login_account(request):
     user = authenticate(username=username, password=password)
     if user:
         login(request,user)
-        return Response({'token'}, status=status.HTTP_200_OK)
+        return Response('Login succesfully', status=status.HTTP_200_OK)
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 #Coba Authentication
@@ -63,8 +63,23 @@ def login_account(request):
 @api_view(['GET'])
 def coba_authentication(request):
     if request.user.is_authenticated:
-        print('Masuk Ngga')
-        serializer = CustomUserSerializer(request.user)
+        serializer = CustomUserSerializerGet(request.user)
         return Response(serializer.data)
-    print('Masuk')
-    return Response('Authentication failed', status=status.HTTP_401_UNAUTHORIZED)
+    return Response('Unauthorazied', status=status.HTTP_401_UNAUTHORIZED)
+
+@swagger_auto_schema(
+    method='get',
+    tags=['Accounts'],
+    responses={
+        status.HTTP_200_OK: openapi.Response('Logout', CustomUserSerializer),
+        status.HTTP_401_UNAUTHORIZED: openapi.Response('Authentication failed', None)
+    }
+)
+@api_view(['GET'])
+def logout_account(request):
+    print(request)
+    if request.user.is_authenticated:
+        print('Masuk')
+        logout(request)
+        return Response('Logout', status=status.HTTP_200_OK)
+    return Response('Authentication failed', status=status.HTTP_401_UNAUTHORIZED)   
