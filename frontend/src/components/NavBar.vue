@@ -1,0 +1,122 @@
+<script setup>
+import { ref } from "vue"
+import SvgIcon from "@jamescoyle/vue-icon";
+import { mdiHomeVariantOutline } from '@mdi/js';
+import { mdiLibraryOutline } from '@mdi/js';
+import { mdiStoreSettingsOutline } from '@mdi/js';
+import { mdiInformationOutline } from '@mdi/js';
+import { mdiFaceAgent } from '@mdi/js';
+import { mdiLogin } from '@mdi/js';
+import { mdiMenu } from '@mdi/js';
+
+
+const IconHome = ref(mdiHomeVariantOutline);
+const IconLibrary = ref(mdiLibraryOutline);
+const IconStore = ref(mdiStoreSettingsOutline);
+const IconAbout = ref(mdiInformationOutline);
+const IconSupport = ref(mdiFaceAgent);
+const IconLogin = ref(mdiLogin);
+const IconMenu = ref(mdiMenu);
+
+const pathIconHome = IconHome.value;
+const pathIconLibrary = IconLibrary.value;
+const pathIconStore = IconStore.value;
+const pathIconAbout = IconAbout.value;
+const pathIconSupport = IconSupport.value;
+const pathIconLogin = IconLogin.value;
+const pathIconMenu = IconMenu.value;
+
+defineProps(["selectedComponent"]);
+defineEmits(["update:selectedComponent"]);
+
+</script>
+
+<template>
+    <div id="nav-container">
+        <div class="menu-button" id="menu-sandwich" @click="$emit('update:selectedComponent', 'Menu')">
+            <svg-icon type="mdi" :path="pathIconMenu" class="logo-nav"></svg-icon>
+        </div>
+
+        <div class="menu-button" @click="$emit('update:selectedComponent', 'HomePage')">
+            <svg-icon type="mdi" :path="pathIconHome" class="logo-nav"></svg-icon>
+            Home
+        </div>
+        <div class="menu-button" @click="$emit('update:selectedComponent', 'LibraryPage')">
+            <svg-icon type="mdi" :path="pathIconLibrary"class="logo-nav"></svg-icon>
+            Library
+        </div>
+        <div class="menu-button" @click="$emit('update:selectedComponent', 'ShopPage')">
+            <svg-icon type="mdi" :path="pathIconStore"class="logo-nav"></svg-icon>
+            Shop
+        </div>
+        <div class="menu-button" @click="$emit('update:selectedComponent', 'AboutPage')">
+            <svg-icon type="mdi" :path="pathIconAbout"class="logo-nav"></svg-icon>
+            About
+        </div>
+        <div class="menu-button" @click="$emit('update:selectedComponent', 'SupportPage')">
+            <svg-icon type="mdi" :path="pathIconSupport"class="logo-nav"></svg-icon>    
+            Support
+        </div>
+        
+        <div class="menu-button" id="login-button" @click="$emit('update:selectedComponent', 'Login')">
+            <svg-icon type="mdi" :path="pathIconLogin" class="logo-nav"></svg-icon>
+            Login
+        </div> 
+    </div>
+</template>
+
+<style scoped>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+    
+
+
+    #nav-container {
+        background-color: white;
+        color: black;
+        border: 2px solid black;
+        /* padding: 10px; */
+        display: flex;
+        box-sizing: border-box;
+        /* height: 60px; */
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Playfair Display', serif;
+        position: relative;
+        /* font-size: medium; */
+    }
+
+    .menu-button {
+        margin-right: 20px;
+        cursor: pointer;
+        /* border: 2px solid black; */
+        width: 100px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* border-radius: 4px; */
+        transition: 0.5s;
+    }
+    .menu-button:hover {
+        background-color: black;
+        color: white;
+        transition: 0.5s;
+    }
+
+   .logo-nav {
+    margin-right: 5px;
+   }
+
+    #login-button {
+        position: absolute;
+        right: 0px;
+        margin-right: 0px;
+    }
+
+    #menu-sandwich {
+        position: absolute;
+        left: 0px;
+        cursor: pointer;
+    }
+</style>
