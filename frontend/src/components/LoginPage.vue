@@ -113,10 +113,6 @@ async function logoutButton (){
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
 
-#paragraf {
-  font-family: 'Playfair Display', serif;
-}
-
 #container {
   /* border: 2px solid red; */
   height: 100%;
