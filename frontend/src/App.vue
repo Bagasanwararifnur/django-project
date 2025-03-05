@@ -26,5 +26,6 @@ const ComponentPage = {SupportPage, HomePage, AboutPage, LibraryPage, ShopPage}
   height: 100vh;
   display: grid;
   grid-template-rows: 1fr 13fr;
+  max-height: 100vh;
  }
 </style>
