@@ -43,76 +43,90 @@ const scrollRight = () => {
             </div>
         </div>
         <div id="book-container-new-arival"class="child-new-arival" ref="bookContainer">
-            <div class="book-item-new-arival">
-                <div class="book-image-new-arival">
-                    <img src="../../assets/9786024248369_TSUKURU-TAZAKI-TANPA-WARNA-DAN-TAHUN-ZIARAHNYA.avif" alt="Book Cover">
+            <a href="#">
+                <div class="book-item-new-arival">
+                    <div class="book-image-new-arival">
+                        <img src="../../assets/9786024248369_TSUKURU-TAZAKI-TANPA-WARNA-DAN-TAHUN-ZIARAHNYA.avif" alt="Book Cover">
+                    </div>
+                    <div class="book-detail-new-arival">
+                        <div id="book-detail-author">Haruki Murakami</div>
+                        <div id="book-detail-title">Tsukuru Tazaki dan Tahun Ziarahnya</div>
+                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+                    </div>
                 </div>
-                <div class="book-detail-new-arival">
-                    <div id="book-detail-author">Haruki Murakami</div>
-                    <div id="book-detail-title">Tsukuru Tazaki dan Tahun Ziarahnya</div>
-                    <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+            </a>
+            <a href="#">
+                <div class="book-item-new-arival">
+                    <div class="book-image-new-arival">
+                        <img src="../../assets/Burmese_Days_cov_1.avif" alt="Book Cover">
+                    </div>
+                    <div class="book-detail-new-arival">
+                        <div id="book-detail-author">George Orwell</div>
+                        <div id="book-detail-title">Burmese Days</div>
+                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+                    </div>
                 </div>
-            </div>
-            <div class="book-item-new-arival">
-                <div class="book-image-new-arival">
-                    <img src="../../assets/Burmese_Days_cov_1.avif" alt="Book Cover">
+            </a>
+            <a href="#">
+                <div class="book-item-new-arival">
+                    <div class="book-image-new-arival">
+                        <img src="../../assets/Coming_Up_For_Air_cov.avif" alt="Book Cover">
+                    </div>
+                    <div class="book-detail-new-arival">
+                        <div id="book-detail-author">George Orwell</div>
+                        <div id="book-detail-title">Coming up for Air</div>
+                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+                    </div>
                 </div>
-                <div class="book-detail-new-arival">
-                    <div id="book-detail-author">George Orwell</div>
-                    <div id="book-detail-title">Burmese Days</div>
-                    <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+            </a>
+            <a href="#">
+                <div class="book-item-new-arival">
+                    <div class="book-image-new-arival">
+                        <img src="../../assets/dthbwjxghkyjxa8b2e8y9j.avif" alt="Book Cover">
+                    </div>
+                    <div class="book-detail-new-arival">
+                        <div id="book-detail-author">Jules Verne</div>
+                        <div id="book-detail-title">Twenty Thousand Leagues Under the Sea</div>
+                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+                    </div>
                 </div>
-            </div>
-            <div class="book-item-new-arival">
-                <div class="book-image-new-arival">
-                    <img src="../../assets/Coming_Up_For_Air_cov.avif" alt="Book Cover">
+            </a>
+            <a href="#">
+                <div class="book-item-new-arival">
+                    <div class="book-image-new-arival">
+                        <img src="../../assets/e-t04tv-vd.avif" alt="Book Cover">
+                    </div>
+                    <div class="book-detail-new-arival">
+                        <div id="book-detail-author">Tsubasa Yamaguchi</div>
+                        <div id="book-detail-title">Blue Period</div>
+                        <div id="book-detail-publisher">PGI</div>
+                    </div>
                 </div>
-                <div class="book-detail-new-arival">
-                    <div id="book-detail-author">George Orwell</div>
-                    <div id="book-detail-title">Coming up for Air</div>
-                    <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+            </a>
+            <a href="#">
+                <div class="book-item-new-arival">
+                    <div class="book-image-new-arival">
+                        <img src="../../assets/vccgnce--2.avif" alt="Book Cover">
+                    </div>
+                    <div class="book-detail-new-arival">
+                        <div id="book-detail-author">Daisuke Aizawa</div>
+                        <div id="book-detail-title">Light Novel The Eminence in Shadow 3 - Special Set</div>
+                        <div id="book-detail-publisher">PGI</div>
+                    </div>
                 </div>
-            </div>
-            <div class="book-item-new-arival">
-                <div class="book-image-new-arival">
-                    <img src="../../assets/dthbwjxghkyjxa8b2e8y9j.avif" alt="Book Cover">
+            </a>
+            <a href="#">
+                <div class="book-item-new-arival">
+                    <div class="book-image-new-arival">
+                        <img src="../../assets/ximeinii9y.avif" alt="Book Cover">
+                    </div>
+                    <div class="book-detail-new-arival">
+                        <div id="book-detail-author">Jules Verne</div>
+                        <div id="book-detail-title">Pulau Misterius (The Mysterious Island)</div>
+                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+                    </div>
                 </div>
-                <div class="book-detail-new-arival">
-                    <div id="book-detail-author">Jules Verne</div>
-                    <div id="book-detail-title">Twenty Thousand Leagues Under the Sea</div>
-                    <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
-                </div>
-            </div>
-            <div class="book-item-new-arival">
-                <div class="book-image-new-arival">
-                    <img src="../../assets/e-t04tv-vd.avif" alt="Book Cover">
-                </div>
-                <div class="book-detail-new-arival">
-                    <div id="book-detail-author">Tsubasa Yamaguchi</div>
-                    <div id="book-detail-title">Blue Period</div>
-                    <div id="book-detail-publisher">PGI</div>
-                </div>
-            </div>
-            <div class="book-item-new-arival">
-                <div class="book-image-new-arival">
-                    <img src="../../assets/vccgnce--2.avif" alt="Book Cover">
-                </div>
-                <div class="book-detail-new-arival">
-                    <div id="book-detail-author">Daisuke Aizawa</div>
-                    <div id="book-detail-title">Light Novel The Eminence in Shadow 3 - Special Set</div>
-                    <div id="book-detail-publisher">PGI</div>
-                </div>
-            </div>
-            <div class="book-item-new-arival">
-                <div class="book-image-new-arival">
-                    <img src="../../assets/ximeinii9y.avif" alt="Book Cover">
-                </div>
-                <div class="book-detail-new-arival">
-                    <div id="book-detail-author">Jules Verne</div>
-                    <div id="book-detail-title">Pulau Misterius (The Mysterious Island)</div>
-                    <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
-                </div>
-            </div>
+            </a>
         </div>
     </div>
 </template>
@@ -165,6 +179,7 @@ const scrollRight = () => {
         font-size: 30px;
     }
 
+
     .logo-nav{
         /* height: 30px; */
         width: 40px;
@@ -196,12 +211,16 @@ const scrollRight = () => {
         display: none;
     }
 
+    a{
+        margin-right: 10px;
+    }
+
     .book-item-new-arival{
         font-family: 'Signika';
         border: 2px solid black;
         width: 12rem;
         height: 18rem;
-        margin-right: 10px;
+        /* margin-right: 10px; */
         flex-shrink: 0; /* Mencegah elemen mengecil saat konten lebih banyak */
         display: grid;
         grid-template-rows: 75% 25%;
