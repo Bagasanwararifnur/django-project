@@ -145,7 +145,7 @@ defineProps(["selectedComponent"]);
         display: grid;
         /* padding: 10px; */
         box-sizing: border-box;
-        transition: 0.5s;
+        /* transition: 0.5s; */
         overflow: auto;
     }
 
