@@ -5,12 +5,14 @@ import { mdiMenuDown } from '@mdi/js';
 import { mdiBookSearch } from '@mdi/js';
 
 
-const Penampil = ref("Satu")
+const Mode = ref("Author")
 const IconMenuDown = ref(mdiMenuDown)
 const IconBookSearch = ref(mdiBookSearch)
 
 const pathMenuDown = IconMenuDown.value
 const pathBookSearch = IconBookSearch.value
+
+const inputText = ref("")
 
 async function OpenDrowpdown() {
     const listItems = document.querySelectorAll('ul li');
@@ -23,7 +25,7 @@ async function OpenDrowpdown() {
 }
 
 async function SelectedDropdown(event) {
-    Penampil.value = event.target.innerText
+    Mode.value = event.target.innerText
     const listItems = document.querySelectorAll('ul li');
     listItems.forEach((item, index) => {
         if (index >= 1) {
@@ -32,14 +34,21 @@ async function SelectedDropdown(event) {
     });
 }
 
+function handleSubmit(){
+    const getInputText = inputText.value
+    const getModeValue = Mode.value
+    console.log(`Input Text: ${getInputText}, Mode: ${getModeValue}`)
+}
+
+
 
 </script>
 
 <template>
-    <form action="#" id="search-container">
+    <form action="#" id="search-container" @submit.prevent="handleSubmit">
         <div class="dropdown-container">
             <ul>
-                <li @click="OpenDrowpdown">{{ Penampil }}
+                <li @click="OpenDrowpdown">{{ Mode }}
                     <div id="down-container">
                         <svg-icon type="mdi" :path="pathMenuDown" class="logo-nav"></svg-icon>
                     </div>
@@ -118,6 +127,7 @@ async function SelectedDropdown(event) {
         background-color: black;
         color: white;
         transition: 0.5s;
+        cursor: pointer;
     }
 
     input{
@@ -130,8 +140,14 @@ async function SelectedDropdown(event) {
     }
 
     input:focus{
-        border: none;
+        border: 2px solid black;
     }
+/* 
+    input[type="submit"]:focus{
+        transition: 0.5s;
+        color: white;
+        background-color: black;
+    } */
 
     #down-container{
         position: absolute;

@@ -1,4 +1,5 @@
 <script setup>
+import LoginRibbon from "./LoginRibbon.vue";
 import { ref } from "vue"
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiHomeVariantOutline } from '@mdi/js';
@@ -26,14 +27,32 @@ const pathIconSupport = IconSupport.value;
 const pathIconLogin = IconLogin.value;
 const pathIconMenu = IconMenu.value;
 
+const loginUserSetting = ref(false)
+const showMenu = ref(false);
+
+const emit = defineEmits(['update:selectedComponent', 'update:showMenu']);
+
+function loginUserSettingState (){
+    loginUserSetting.value =!loginUserSetting.value;
+    console.log(loginUserSetting.value);
+}
+
+function handleShowMenuClick() {
+  showMenu.value = !showMenu.value;  // Toggle showMenu    
+  console.log(`showMenu changed to: ${!showMenu.value}`);
+  emit('update:showMenu', showMenu.value)
+}
+
+
+
 defineProps(["selectedComponent"]);
-defineEmits(["update:selectedComponent"]);
+
 
 </script>
 
 <template>
     <div id="nav-container">
-        <div class="menu-button" id="menu-sandwich" @click="$emit('update:selectedComponent', 'Menu')">
+        <div class="menu-button" id="menu-sandwich" @click="handleShowMenuClick">
             <svg-icon type="mdi" :path="pathIconMenu" class="logo-nav"></svg-icon>
         </div>
 
@@ -58,10 +77,14 @@ defineEmits(["update:selectedComponent"]);
             Support
         </div>
         
-        <div class="menu-button" id="login-button" @click="$emit('update:selectedComponent', 'Login')">
-            <svg-icon type="mdi" :path="pathIconLogin" class="logo-nav"></svg-icon>
-            Login
+        <div class="menu-button" id="login-button" @click="loginUserSettingState">
+                <svg-icon type="mdi" :path="pathIconLogin" class="logo-nav"></svg-icon>
+                Login
         </div> 
+
+        <div id="login-user-setting" :style="{ height:loginUserSetting ? '100px':'0px', border: loginUserSetting ? '2px solid black' : 'none'}">
+            <LoginRibbon/>
+        </div>
     </div>
 </template>
 
@@ -97,6 +120,7 @@ defineEmits(["update:selectedComponent"]);
         justify-content: center;
         /* border-radius: 4px; */
         transition: 0.5s;
+        z-index: 2;
     }
     .menu-button:hover {
         background-color: black;
@@ -107,6 +131,27 @@ defineEmits(["update:selectedComponent"]);
    .logo-nav {
     margin-right: 5px;
    }
+
+    #login-user-setting {
+        /* display: none; */
+        position: absolute;
+        /* background-color: white; */
+        width: 200px;
+        height: fit-content;
+        right: -2px;
+        bottom: -102px;
+        z-index: 3;
+        background-color: white;
+        display: grid;
+        /* padding: 10px; */
+        box-sizing: border-box;
+        /* transition: 0.5s; */
+        overflow: auto;
+    }
+
+    #login-user-setting::-webkit-scrollbar{
+        display: none;
+    }
 
     #login-button {
         position: absolute;
