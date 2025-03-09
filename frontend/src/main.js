@@ -5,9 +5,10 @@ import './style.css'
 import App from './App.vue'
 import BookBorrowed from './components/SideMenu/BookBorrowed.vue'
 import BookOwned from './components/SideMenu/BookOwned.vue'
-import HomePage from './components/Home/HomePage.vue'
+// import HomePage from './components/Home/HomePage.vue'
 import RootPage from './components/RootPage.vue'
 import LoginPage from './components/LoginPage.vue'
+import BookDetailsLibrary from './components/Library/BookDetailsLibrary.vue'
 
 const router = createRouter({
     history : createWebHistory(),
@@ -15,8 +16,8 @@ const router = createRouter({
         { path : '/', component: RootPage, props: route => ({ pageRoot: route.query.pageRoot || 'HomePage' })},
         { path : '/book-owned', component : BookOwned},
         { path : '/book-borrowed', component : BookBorrowed},
-        { path : '/login', component: LoginPage}
-        { path: '/book-details-library/:bookname', component: BookDetailsLibrary, props: true }
+        { path : '/login', component: LoginPage},
+        { path : '/book-details-library/:bookname', component: BookDetailsLibrary, props: true }
     ]
 })
 

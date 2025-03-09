@@ -13,8 +13,19 @@ const isLoginPage = computed(() => router.currentRoute.value.path === '/login')
 
 
 watch(ComponentsMenu, (newValue) => {
-  router.push({ path: '/', query: { pageRoot: newValue } });
+  if (ComponentsMenu.value !== ''){
+    router.push({ path: '/', query: { pageRoot: newValue } });
+
+  }
 });
+
+watch(() => router.currentRoute.value.path, (newValue)=>{
+  if (newValue !== '/'){
+    ComponentsMenu.value = ''
+    console.log(newValue)
+    // router.push({ path: '/', query: { pageRoot: ComponentsMenu.value } });
+  }
+})
 
 
 </script>

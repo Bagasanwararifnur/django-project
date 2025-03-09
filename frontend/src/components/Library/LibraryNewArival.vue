@@ -43,7 +43,8 @@ const scrollRight = () => {
             </div>
         </div>
         <div id="book-container-new-arival"class="child-new-arival" ref="bookContainer">
-            <a href="#">
+
+            <router-link to="book-details-library/tsukuru-tazaki" class="book-link">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
                         <img src="../../assets/9786024248369_TSUKURU-TAZAKI-TANPA-WARNA-DAN-TAHUN-ZIARAHNYA.avif" alt="Book Cover">
@@ -54,8 +55,9 @@ const scrollRight = () => {
                         <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
                     </div>
                 </div>
-            </a>
-            <a href="#">
+            </router-link>
+
+            <router-link to="book-details-library/burmese-days" class="book-link">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
                         <img src="../../assets/Burmese_Days_cov_1.avif" alt="Book Cover">
@@ -66,8 +68,9 @@ const scrollRight = () => {
                         <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
                     </div>
                 </div>
-            </a>
-            <a href="#">
+            </router-link>
+
+            <router-link to="book-details-library/coming-up" class="book-link">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
                         <img src="../../assets/Coming_Up_For_Air_cov.avif" alt="Book Cover">
@@ -78,8 +81,10 @@ const scrollRight = () => {
                         <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
                     </div>
                 </div>
-            </a>
-            <a href="#">
+            </router-link>
+
+
+            <router-link to="book-details-library/twenty-thousand" class="book-link">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
                         <img src="../../assets/dthbwjxghkyjxa8b2e8y9j.avif" alt="Book Cover">
@@ -90,8 +95,9 @@ const scrollRight = () => {
                         <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
                     </div>
                 </div>
-            </a>
-            <a href="#">
+            </router-link>
+
+            <router-link to="book-details-library/blue-period" class="book-link">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
                         <img src="../../assets/e-t04tv-vd.avif" alt="Book Cover">
@@ -102,8 +108,9 @@ const scrollRight = () => {
                         <div id="book-detail-publisher">PGI</div>
                     </div>
                 </div>
-            </a>
-            <a href="#">
+            </router-link>
+
+            <router-link to="book-details-library/light-novel" class="book-link">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
                         <img src="../../assets/vccgnce--2.avif" alt="Book Cover">
@@ -114,19 +121,21 @@ const scrollRight = () => {
                         <div id="book-detail-publisher">PGI</div>
                     </div>
                 </div>
-            </a>
-            <a href="#">
+            </router-link>
+
+            <router-link to="book-details-library/pulau-misterius" class="book-link">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
                         <img src="../../assets/ximeinii9y.avif" alt="Book Cover">
                     </div>
                     <div class="book-detail-new-arival">
                         <div id="book-detail-author">Jules Verne</div>
-                        <div id="book-detail-title">Pulau Misterius (The Mysterious Island)</div>
+                        <div id="book-detail-title">Pulau Misterius</div>
                         <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
                     </div>
                 </div>
-            </a>
+            </router-link>
+            
         </div>
     </div>
 </template>
@@ -211,7 +220,8 @@ const scrollRight = () => {
         display: none;
     }
 
-    a{
+
+    .book-link{
         margin-right: 10px;
     }
 
