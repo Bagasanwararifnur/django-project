@@ -1,75 +1,85 @@
 <script setup>
-import { ref } from 'vue'
-const name = ref('')
-const password = ref('')
+import { ref } from 'vue';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiFacebook } from '@mdi/js';
+import { mdiInstagram } from '@mdi/js';
 
-async function submitButton () {
-  const url = 'http://127.0.0.1:8000/api/v1/accounts/login'
-  const formData = new FormData()
-  formData.append('username', name.value)
-  formData.append('password', password.value)
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'accept': 'application/json',
-    },
-    body: formData,
-    credentials: 'include',
-  });
+const iconFacebook = ref(mdiFacebook)
+const iconInstagram = ref(mdiInstagram)
 
-  if (response.ok){
-    const result = await response.json()
-    console.log(result)
-  }
-  else {
-    console.error('Error:', response.status)
-  }
-}
+const pathIconFacebook = iconFacebook.value
+const pathIconInstagram = iconInstagram.value
+
+// import { ref } from 'vue'
+// const name = ref('')
+// const password = ref('')
+
+// async function submitButton () {
+//   const url = 'http://127.0.0.1:8000/api/v1/accounts/login'
+//   const formData = new FormData()
+//   formData.append('username', name.value)
+//   formData.append('password', password.value)
+//   const response = await fetch(url, {
+//     method: 'POST',
+//     headers: {
+//       'accept': 'application/json',
+//     },
+//     body: formData,
+//     credentials: 'include',
+//   });
+
+//   if (response.ok){
+//     const result = await response.json()
+//     console.log(result)
+//   }
+//   else {
+//     console.error('Error:', response.status)
+//   }
+// }
 
 
-async function checkButton () {
-  const url = 'http://127.0.0.1:8000/api/v1/accounts/coba_authentication'
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'accept': 'application/json',
-    },
-    credentials: 'include',
-  })
+// async function checkButton () {
+//   const url = 'http://127.0.0.1:8000/api/v1/accounts/coba_authentication'
+//   const response = await fetch(url, {
+//     method: 'GET',
+//     headers: {
+//       'accept': 'application/json',
+//     },
+//     credentials: 'include',
+//   })
 
-  if (response.ok){
-    const result = await response.json()
-    console.log(result)
-  }
-  else {
-    console.error('Error:', response.status)
-  }
-}
+//   if (response.ok){
+//     const result = await response.json()
+//     console.log(result)
+//   }
+//   else {
+//     console.error('Error:', response.status)
+//   }
+// }
 
-async function logoutButton (){
-  const url ='http://127.0.0.1:8000/api/v1/accounts/logout';
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'accept': 'application/json',
-    },
-    credentials: 'include',
-  });
-  if (response.ok){
-    const result = await response.json()
-    console.log(result)
-  }
-  else {
-    console.error('Error:', response.status)
-  }
-}
+// async function logoutButton (){
+//   const url ='http://127.0.0.1:8000/api/v1/accounts/logout';
+//   const response = await fetch(url, {
+//     method: 'POST',
+//     headers: {
+//       'accept': 'application/json',
+//     },
+//     credentials: 'include',
+//   });
+//   if (response.ok){
+//     const result = await response.json()
+//     console.log(result)
+//   }
+//   else {
+//     console.error('Error:', response.status)
+//   }
+// }
 
 
 </script>
 
 <template>
   <div id="container">
-
     <div id="form-container">
       <div id="side-gridcontainer">
         <div id="side-container">
@@ -77,7 +87,9 @@ async function logoutButton (){
         </div>
         <div id="side-container">
           <div id="action-container">
-            <div id="logo"></div>
+            <router-link to="/" id="logo">
+              LibraVerse
+            </router-link>
           </div>
           <div id="action-container">
             <form @submit.prevent="submitButton" id="form-asli">
@@ -93,7 +105,10 @@ async function logoutButton (){
           </div>
         </div>
       </div>
-      <!-- <div id="bottom-container">ppp</div> -->
+      <div id="bottom-container">
+        <svg-icon type="mdi" :path="pathIconFacebook" class="logo-nav"></svg-icon>
+        <svg-icon type="mdi" :path="pathIconInstagram" class="logo-nav"></svg-icon>
+      </div>
     </div>
 
   </div>
@@ -168,14 +183,15 @@ async function logoutButton (){
 
 #bottom-container {
   /* background-color: green; */
-  border: 1px solid white;
+  /* border: 1px solid white; */
   height: 5%;
   width: 100%;
   box-sizing: border-box;
   position: absolute;
   bottom: 0;
+  padding: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: right;
   align-items: center;
 }
 
@@ -200,12 +216,17 @@ async function logoutButton (){
 }
 
 #logo{
-  border: 2px solid black;
+  /* border: 2px solid black; */
   width: 200px;
   height: 50px;
   position: absolute;
   right: 5px;
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20pt;
+  color: black;
 }
 
 #form-asli {
@@ -252,5 +273,7 @@ async function logoutButton (){
   justify-content: center;
   /* align-items: center; */
 }
+
+
 
 </style>
