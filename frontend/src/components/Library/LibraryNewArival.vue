@@ -42,6 +42,7 @@ const scrollRight = () => {
                 New Arival
             </div>
         </div>
+        
         <div id="book-container-new-arival"class="child-new-arival" ref="bookContainer">
 
             <router-link to="book-details-library/tsukuru-tazaki" class="book-link">

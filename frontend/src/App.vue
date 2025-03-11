@@ -22,7 +22,6 @@ watch(ComponentsMenu, (newValue) => {
 watch(() => router.currentRoute.value.path, (newValue)=>{
   if (newValue !== '/'){
     ComponentsMenu.value = ''
-    console.log(newValue)
     // router.push({ path: '/', query: { pageRoot: ComponentsMenu.value } });
   }
 })
