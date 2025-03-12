@@ -1,12 +1,20 @@
 from django.db import models
 from enum import Enum
 import datetime
+import uuid
+import os
 
 class StatusBorrow(Enum):
     Borrowed = 'Borrowed'
     Returned = 'Returned'
 
 # Create your models here.
+
+def renameBook(instance, filename):
+    extension = filename.split('.')[-1]
+    new_filename = f'{uuid.uuid4()}.{extension}'
+    return os.path.join(f'cover/{new_filename}')
+
 
 class Book(models.Model):
     title = models.CharField(max_length=100)
@@ -16,8 +24,9 @@ class Book(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     publisher = models.CharField(max_length=100)
-    isbn = models.CharField(max_length=100)
+    isbn = models.CharField(max_length=100, unique=True)
     genre = models.JSONField(default=list)
+    cover = models.ImageField(upload_to=renameBook)
 
     def __str__(self):
         return self.title
@@ -38,3 +47,14 @@ class BookBorrowed(models.Model):
 
     def __str__(self):
         return f"Book: {self.book.title}"
+
+class BookOwned(models.Model):
+    owned_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    bought_by = models.CharField(max_length=100)
+    is_donated = models.BooleanField(default=False)
+    is_borrowed = models.BooleanField(default=False)
+    borrower_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"Book: {self.book.title} - Bought by: {self.bought_by}"
