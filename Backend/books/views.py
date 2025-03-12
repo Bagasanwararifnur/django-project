@@ -8,6 +8,7 @@ from .models import *
 from .serializers import *
 
 import datetime
+import json
 
 
 # Books Create
@@ -38,13 +39,54 @@ import datetime
 @parser_classes([MultiPartParser, FormParser])
 def upload_book(request):
     dict_book = request.data.dict()
+    dict_book['genre'] = dict_book['genre'].split(',')
     publication_date = datetime.datetime.now().strftime('%Y-%m-%d')
     dict_book['publication_date'] = publication_date
     serializer = BookSerializer(data=dict_book)
     if serializer.is_valid():
-        serializer.save() 
+        print(serializer.data)
+        # serializer.save() 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+## Yang atas percobaan
+
+# # Books Create
+# @swagger_auto_schema(
+#     method='post',
+#     tags=['Books'],
+#     manual_parameters=[
+#         openapi.Parameter('title', openapi.IN_FORM, type=openapi.TYPE_STRING),
+#         openapi.Parameter('author', openapi.IN_FORM, type=openapi.TYPE_STRING),
+#         openapi.Parameter('release_date', openapi.IN_FORM, type=openapi.TYPE_STRING),
+#         openapi.Parameter('price', openapi.IN_FORM, type=openapi.TYPE_NUMBER),
+#         openapi.Parameter('publisher', openapi.IN_FORM, type=openapi.TYPE_STRING),
+#         openapi.Parameter('description', openapi.IN_FORM, type=openapi.TYPE_STRING),
+#         openapi.Parameter(
+#                 'genre',
+#                 openapi.IN_FORM,
+#                 type=openapi.TYPE_ARRAY,
+#                 items=openapi.Items(type=openapi.TYPE_STRING),
+#                 description="List of genres for the book"
+#             ),
+#     ],
+#     responses={
+#         status.HTTP_201_CREATED: openapi.Response(description='Book created successfully'),
+#         status.HTTP_400_BAD_REQUEST: openapi.Response(description='Bad request'),
+#     },
+# )
+# @api_view(['POST'])
+# @parser_classes([MultiPartParser, FormParser])
+# def upload_book(request):
+#     dict_book = request.data.dict()
+#     publication_date = datetime.datetime.now().strftime('%Y-%m-%d')
+#     dict_book['publication_date'] = publication_date
+#     serializer = BookSerializer(data=dict_book)
+#     if serializer.is_valid():
+#         print(serializer.data)
+#         # serializer.save() 
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Book Details with Title Name
 @swagger_auto_schema(

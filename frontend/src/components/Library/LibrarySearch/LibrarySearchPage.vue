@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import LibraryPageContainer from './LibraryPageContainer.vue';
-import SideSearchBar from '../../SideMenu/SideSearchBar.vue'
+import LibraryPageContainer from './LibraryPageContainer.vue'
+import SideSearchBarLibrary from '../SideSearchBarLibrary.vue';
 
 const router = useRouter()
 
@@ -17,7 +17,7 @@ console.log(modeSearch, valueSearch)
     <div class="content-container">
 
         <div class="sub-content-container">
-            <SideSearchBar />
+            <SideSearchBarLibrary />
         </div>
 
         <div class="sub-content-container">

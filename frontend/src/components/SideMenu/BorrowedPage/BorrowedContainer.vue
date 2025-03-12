@@ -1,18 +1,37 @@
 <script setup>
 
-import { ref, useTemplateRef } from 'vue';
+import { ref, useTemplateRef, onMounted, watch } from 'vue';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiSkipNext } from '@mdi/js';
+import { mdiSkipForward } from '@mdi/js';
+import { mdiSkipPrevious } from '@mdi/js';
+import { mdiSkipBackward } from '@mdi/js';
 import ModalReturned from './ModalReturned.vue';
 
 const listBook = ref([
     { 'img' : "/src/assets/ximeinii9y.avif", 'author' : "Jules Verne", 'name' : "Pulau Misterius", 'publisher':'Kepustakaan Populer Gramedia'},
     { 'img' : "src/assets/dthbwjxghkyjxa8b2e8y9j.avif", 'author' : "Jules Verne", 'name' : "Twenty Thousand Under the Sea", 'publisher':'Kepustakaan Populer Gramedia'},
 ])
-const numberPagination = ref(Math.floor(listBook.value.length/10+1))
 
-const itemRefs = useTemplateRef("books")
+// const numberPagination = ref(Math.floor(listBook.value.length/10+1))
+const numberPagination = ref(10)
+const paginationShown = ref(1)
 
 const stateReturnedModal = ref(false)
 const details = ref()
+
+const iconSkipNext = ref(mdiSkipNext)
+const iconSkipForward = ref(mdiSkipForward)
+const iconSkipPrevious = ref(mdiSkipPrevious)
+const iconSkipBackward = ref(mdiSkipBackward)
+
+const pathSkipNext = iconSkipNext.value
+const pathSkipForward = iconSkipForward.value
+const pathSkipPrevious = iconSkipPrevious.value
+const pathSkipBackward = iconSkipBackward.value
+
+
+const itemRefs = useTemplateRef("books")
 
 
 function readBook(index){
@@ -23,7 +42,7 @@ function readBook(index){
     stateReturnedModal.value = true
 }
 
-function returnedBook(index){
+function donatedBook(index){
     const item = itemRefs.value[index]
     const author = item.querySelector("#book-detail-author").innerHTML
     const title = item.querySelector("#book-detail-title").innerHTML
@@ -32,6 +51,73 @@ function returnedBook(index){
     details.value = {author, title, publisher}
 
     stateReturnedModal.value = true
+}
+
+watch(paginationShown, (newValue) =>{
+    const buttonNext = document.querySelector("#next-button")
+    const buttonLast = document.querySelector("#last-button")
+    const buttonPrev = document.querySelector("#previous-button")
+    const buttonFirst = document.querySelector("#first-button")
+
+    if(newValue === 1){
+        buttonPrev.disabled = true
+        buttonFirst.disabled = true
+        buttonNext.disabled = false
+        buttonLast.disabled = false
+    }
+    else if(newValue === numberPagination.value){
+        buttonNext.disabled = true
+        buttonLast.disabled = true
+        buttonPrev.disabled = false
+        buttonFirst.disabled = false
+    }
+    else{
+        buttonNext.disabled = false
+        buttonLast.disabled = false
+        buttonPrev.disabled = false
+        buttonFirst.disabled = false
+    }
+})
+
+onMounted(() =>{
+    const buttonPrev = document.querySelector("#previous-button")
+    const buttonFirst = document.querySelector("#first-button")
+    buttonFirst.disabled = true
+    buttonPrev.disabled = true
+})
+
+
+function firstPage(){
+    paginationShown.value = 1
+}
+
+function lastPage(){
+    paginationShown.value = numberPagination.value
+}
+
+function nextPage(){
+    if(paginationShown.value < numberPagination.value){
+        paginationShown.value++
+    }
+    else if(paginationShown.value === numberPagination.value){
+        paginationShown.value = numberPagination.value
+    }
+    else{
+        paginationShown.value = 1
+    }
+}
+
+function previousPage(){
+    if(paginationShown.value > 1){
+        paginationShown.value--
+        
+    }
+    else if(paginationShown.value === 1){
+        paginationShown.value = 1
+    }
+    else{
+        paginationShown.value = numberPagination.value
+    }
 }
 
 
@@ -65,7 +151,21 @@ function returnedBook(index){
                 </div>
 
                 <div class="item-booklist-container">
-                    <div class="pagination-number" v-for="pageN in numberPagination">{{ pageN }}</div>
+                    <button class="pagination-container" id="first-button">
+                        <svg-icon type="mdi" :path="pathSkipBackward" class="logo-nav" @click="firstPage"></svg-icon>
+                    </button>
+                    <button class="pagination-container" id="previous-button">
+                        <svg-icon type="mdi" :path="pathSkipPrevious" class="logo-nav" @click="previousPage"></svg-icon>
+                    </button>
+
+                    <div class="pagination-container">{{ paginationShown }}</div>
+                    
+                    <button class="pagination-container" id="next-button">
+                        <svg-icon type="mdi" :path="pathSkipNext" class="logo-nav" @click="nextPage"></svg-icon>
+                    </button>
+                    <button class="pagination-container" id="last-button">
+                        <svg-icon type="mdi" :path="pathSkipForward" class="logo-nav" @click="lastPage"></svg-icon>
+                    </button>
                 </div>
     </div>
 <ModalReturned v-show="stateReturnedModal" v-model:stateReturned="stateReturnedModal" :detailsBook="details"/>
@@ -111,7 +211,7 @@ function returnedBook(index){
         /* height: 5em; */
     }
 
-    .pagination-number {
+    .pagination-container {
         border: 2px solid black;
         margin-right: 10px;
         width: 30px;
@@ -119,6 +219,17 @@ function returnedBook(index){
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 0px;
+    }
+
+    button.pagination-container{
+        border-radius: 0px;
+    }
+
+    button.pagination-container:disabled{
+        background-color: gray;
+        color: lightgray;
+        cursor: not-allowed;
     }
 
     .book-item{

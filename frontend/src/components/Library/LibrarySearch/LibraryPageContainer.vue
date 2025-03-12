@@ -1,12 +1,15 @@
 <script setup>
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiSkipNext } from '@mdi/js';
 import { mdiSkipForward } from '@mdi/js';
 import { mdiSkipPrevious } from '@mdi/js';
 import { mdiSkipBackward } from '@mdi/js';
-import ModalDonated from './ModalDonated.vue';
 
+const router = useRouter()
+const Mode = router.currentRoute.value.query.modeSearch
+const valueSearch = router.currentRoute.value.query.valueSearch
 
 const listBook = ref([
     { 'img' : "src/assets/dthbwjxghkyjxa8b2e8y9j.avif", 'author' : "Jules Verne", 'name' : "Twenty Thousand Under the Sea", 'publisher':'Kepustakaan Populer Gramedia'},
@@ -14,8 +17,13 @@ const listBook = ref([
 ])
 // const numberPagination = ref(Math.floor(listBook.value.length/10+1))
 const numberPagination = ref(10)
-const paginationShown = ref(1)
+const paginationShown = ref()
 
+if (router.currentRoute.value.query.paginationShown === undefined){
+    paginationShown.value = 1
+}else{
+    paginationShown.value = parseInt(router.currentRoute.value.query.paginationShown)
+}
 
 const stateReturnedModal = ref(false)
 const details = ref()
@@ -30,42 +38,19 @@ const pathSkipForward = iconSkipForward.value
 const pathSkipPrevious = iconSkipPrevious.value
 const pathSkipBackward = iconSkipBackward.value
 
-
-const itemRefs = useTemplateRef("books")
-
-
-function readBook(index){
-    const item = itemRefs.value[index]
-    console.log(item.querySelector("#book-detail-author").innerHTML)
-    console.log(item.querySelector("#book-detail-title").innerHTML)
-    console.log(item.querySelector("#book-detail-publisher").innerHTML)
-    stateReturnedModal.value = true
-}
-
-function donatedBook(index){
-    const item = itemRefs.value[index]
-    const author = item.querySelector("#book-detail-author").innerHTML
-    const title = item.querySelector("#book-detail-title").innerHTML
-    const publisher = item.querySelector("#book-detail-publisher").innerHTML
-
-    details.value = {author, title, publisher}
-
-    stateReturnedModal.value = true
-}
-
-watch(paginationShown, (newValue) =>{
+onMounted(() =>{
     const buttonNext = document.querySelector("#next-button")
     const buttonLast = document.querySelector("#last-button")
     const buttonPrev = document.querySelector("#previous-button")
     const buttonFirst = document.querySelector("#first-button")
 
-    if(newValue === 1){
+    if(paginationShown.value === 1){
         buttonPrev.disabled = true
         buttonFirst.disabled = true
         buttonNext.disabled = false
         buttonLast.disabled = false
     }
-    else if(newValue === numberPagination.value){
+    else if(paginationShown.value === numberPagination.value){
         buttonNext.disabled = true
         buttonLast.disabled = true
         buttonPrev.disabled = false
@@ -77,47 +62,28 @@ watch(paginationShown, (newValue) =>{
         buttonPrev.disabled = false
         buttonFirst.disabled = false
     }
-})
-
-onMounted(() =>{
-    const buttonPrev = document.querySelector("#previous-button")
-    const buttonFirst = document.querySelector("#first-button")
-    buttonFirst.disabled = true
-    buttonPrev.disabled = true
+    console.log('pindah')
 })
 
 
 function firstPage(){
     paginationShown.value = 1
+    router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function lastPage(){
     paginationShown.value = numberPagination.value
+    router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function nextPage(){
-    if(paginationShown.value < numberPagination.value){
-        paginationShown.value++
-    }
-    else if(paginationShown.value === numberPagination.value){
-        paginationShown.value = numberPagination.value
-    }
-    else{
-        paginationShown.value = 1
-    }
+    paginationShown.value++
+    router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function previousPage(){
-    if(paginationShown.value > 1){
-        paginationShown.value--
-        
-    }
-    else if(paginationShown.value === 1){
-        paginationShown.value = 1
-    }
-    else{
-        paginationShown.value = numberPagination.value
-    }
+    paginationShown.value--
+    router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 
@@ -130,7 +96,7 @@ function previousPage(){
 
                     <div class="item-container">
 
-                        <div class="book-item" v-for="(book,index) in listBook" ref="books">
+                        <router-link :to="'book-details-library/'+book.name" class="book-item" v-for="(book,index) in listBook" ref="index">
                             <div class="book-item-details">
                                 <img :src="book.img" alt="Book Cover">
                             </div>
@@ -139,11 +105,7 @@ function previousPage(){
                                 <div id="book-detail-title" class="book-informations">{{ book.name }}</div>
                                 <div id="book-detail-publisher" class="book-informations">{{ book.publisher }}</div>
                             </div>
-                            <div class="book-item-details">
-                                <button class="book-item-actions" @click="readBook(index)">Read</button>
-                                <button class="book-item-actions" @click="donatedBook(index)">Borrow</button>
-                            </div>
-                        </div>
+                        </router-link>
                         
                     </div>
 
@@ -167,7 +129,6 @@ function previousPage(){
                     </button>
                 </div>
     </div>
-<ModalDonated v-show="stateReturnedModal" v-model:stateReturned="stateReturnedModal" :detailsBook="details"/>
 </template>
 
 <style scoped>
@@ -237,20 +198,15 @@ function previousPage(){
         width: 15em;
         height: 22em;
         display: grid;
-        grid-template-rows: 72% 22% auto;
+        grid-template-rows: 75% auto;
     }
 
-    .book-item-details:last-child{
-        display: flex;
-        display: grid;
-        grid-template-columns: 45% 45%;
-        justify-content: space-between;
-    }
 
     .book-item-details:nth-child(2){
         display: grid;
         grid-template-rows: 25% auto 25%;
         font-size: 8pt;
+        color:black
     }
 
     .book-item-details:first-child img {
@@ -273,35 +229,7 @@ function previousPage(){
         font-size: 14pt;
     }
 
-    .book-item-actions{
-        /* border: 2px solid black; */
-        height: 100%;
-        padding: 0px;
-        border-radius: 0px;
-        font-size: 12pt;
-        transition: 0.3s;
-    }
-
-    .book-item-actions:first-child{
-        box-sizing: border-box;
-        border: 2px solid black;
-        background-color: white;
-        color: black;
-    }
-
-    .book-item-actions:first-child:hover{
-        box-sizing: border-box;
-        border: 2px solid black;
-        background-color: black;
-        color: white;
-        transition: 0.3s;
-    }
-
-    .book-item-actions:last-child:hover{
-        box-sizing: border-box;
-        border: 2px solid black;
-        background-color: white;
-        color: black;
-        transition: 0.3s;
+    #book-detail-author{
+        color: gray;
     }
 </style>

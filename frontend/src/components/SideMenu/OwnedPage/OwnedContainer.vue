@@ -16,7 +16,6 @@ const listBook = ref([
 const numberPagination = ref(10)
 const paginationShown = ref(1)
 
-
 const stateReturnedModal = ref(false)
 const details = ref()
 

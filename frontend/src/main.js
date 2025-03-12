@@ -19,7 +19,9 @@ const router = createRouter({
         { path : '/book-borrowed', component : BookBorrowed},
         { path : '/login', component: LoginPage},
         { path : '/book-details-library/:bookname', component: BookDetailsLibrary, props: true },
-        { path : '/library-search', component: LibrarySearchPage, props: route =>({modeSearch : route.query.modeSearch, valueSearch: route.query.valueSearch})}
+        { path : '/library-search', component: LibrarySearchPage, props: route =>({modeSearch : route.query.modeSearch, valueSearch: route.query.valueSearch,
+            paginationShown : route.query.paginationShown || '1'
+        })}
     ]
 })
 
