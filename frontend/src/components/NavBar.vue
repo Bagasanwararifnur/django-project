@@ -32,10 +32,10 @@ const showMenu = ref(false);
 
 const emit = defineEmits(['update:selectedComponent', 'update:showMenu']);
 
-function loginUserSettingState (){
-    loginUserSetting.value =!loginUserSetting.value;
-    console.log(loginUserSetting.value);
-}
+// function loginUserSettingState (){
+//     loginUserSetting.value =!loginUserSetting.value;
+//     console.log(loginUserSetting.value);
+// }
 
 function handleShowMenuClick() {
   showMenu.value = !showMenu.value;  // Toggle showMenu    
@@ -55,7 +55,6 @@ defineProps(["selectedComponent"]);
         <div class="menu-button" id="menu-sandwich" @click="handleShowMenuClick">
             <svg-icon type="mdi" :path="pathIconMenu" class="logo-nav"></svg-icon>
         </div>
-
         <div class="menu-button" @click="$emit('update:selectedComponent', 'HomePage')">
             <svg-icon type="mdi" :path="pathIconHome" class="logo-nav"></svg-icon>
             Home
@@ -77,14 +76,15 @@ defineProps(["selectedComponent"]);
             Support
         </div>
         
-        <div class="menu-button" id="login-button" @click="loginUserSettingState">
-                <svg-icon type="mdi" :path="pathIconLogin" class="logo-nav"></svg-icon>
-                Login
-        </div> 
+        <router-link to = '/login' class="menu-button" id="login-button">
+            <svg-icon type="mdi" :path="pathIconLogin" class="logo-nav"></svg-icon>
+            Login
+        </router-link>
 
-        <div id="login-user-setting" :style="{ height:loginUserSetting ? '100px':'0px', border: loginUserSetting ? '2px solid black' : 'none'}">
+
+        <!-- <div id="login-user-setting" :style="{ height:loginUserSetting ? '100px':'0px', border: loginUserSetting ? '2px solid black' : 'none'}">
             <LoginRibbon/>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -121,6 +121,7 @@ defineProps(["selectedComponent"]);
         /* border-radius: 4px; */
         transition: 0.5s;
         z-index: 2;
+        color: black;
     }
     .menu-button:hover {
         background-color: black;

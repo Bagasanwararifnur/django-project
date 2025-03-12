@@ -1,18 +1,21 @@
 <script setup>
 import { ref } from "vue"
+import { useRouter } from "vue-router";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiMenuDown } from '@mdi/js';
 import { mdiBookSearch } from '@mdi/js';
 
+const router = useRouter()
 
 const Mode = ref("Author")
+const inputText = ref("")
+
 const IconMenuDown = ref(mdiMenuDown)
 const IconBookSearch = ref(mdiBookSearch)
 
 const pathMenuDown = IconMenuDown.value
 const pathBookSearch = IconBookSearch.value
 
-const inputText = ref("")
 
 async function OpenDrowpdown() {
     const listItems = document.querySelectorAll('ul li');
@@ -37,7 +40,13 @@ async function SelectedDropdown(event) {
 function handleSubmit(){
     const getInputText = inputText.value
     const getModeValue = Mode.value
+    const querySearch = router.currentRoute.value.query.pageRoot
     console.log(`Input Text: ${getInputText}, Mode: ${getModeValue}`)
+    console.log(router.currentRoute.value.query.pageRoot)
+
+    if (querySearch === 'LibraryPage'){
+        router.push({ path: '/library-search', query: { modeSearch: Mode.value, valueSearch: inputText.value } });
+    }
 }
 
 

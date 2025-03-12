@@ -1,36 +1,45 @@
 <script setup>
-import { ref, watch} from "vue"
+import { ref, watch, computed, onMounted} from "vue"
+import { useRouter } from "vue-router"
 import LoginPage from './components/LoginPage.vue'
 import NavBar from './components/NavBar.vue'
-import SupportPage from './components/Support/SupportPage.vue'
-import HomePage from './components/Home/HomePage.vue'
-import AboutPage from './components/About/AboutPage.vue'
-import LibraryPage from './components/Library/LibraryPage.vue'
-import ShopPage from './components/Shop/ShopPage.vue'
 import MenuBar from "./components/Utilities/MenuBar.vue"
 
 const ComponentsMenu = ref('HomePage')
 const shownMenuState = ref(false);
-// const percobaanValue = ref(false)
+const router = useRouter();
 
-const ComponentPage = {SupportPage, HomePage, AboutPage, LibraryPage, ShopPage}
+const isLoginPage = computed(() => router.currentRoute.value.path === '/login')
 
-watch(shownMenuState, (newValue, oldValue) => {
-  console.log(`showMenuState berubah: ${newValue}`);
-}); 
+
+watch(ComponentsMenu, (newValue) => {
+  if (ComponentsMenu.value !== ''){
+    router.push({ path: '/', query: { pageRoot: newValue } });
+
+  }
+});
+
+watch(() => router.currentRoute.value.path, (newValue)=>{
+  if (newValue !== '/'){
+    ComponentsMenu.value = ''
+    // router.push({ path: '/', query: { pageRoot: ComponentsMenu.value } });
+  }
+})
+
 
 </script>
 
 <template>
-  <div>
+  <LoginPage v-if="isLoginPage"/>
+  <div v-else class="main-app-container">
     <NavBar v-model:selectedComponent="ComponentsMenu" v-model:showMenu="shownMenuState"/>
-    <component :is="ComponentPage[ComponentsMenu]" />
+    <router-view :key="$route.fullPath"></router-view>
     <MenuBar :style="{ width: shownMenuState ? '300px' : '0' }" />
   </div>
 </template>
 
 <style scoped>
- div{
+ .main-app-container{
   height: 100vh;
   display: grid;
   grid-template-rows: 1fr 13fr;

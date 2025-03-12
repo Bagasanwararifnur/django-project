@@ -1,6 +1,4 @@
 
-
-
 <template>
     <div class="content-container">
         <div class="component">
