@@ -1,8 +1,26 @@
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiChevronRight } from '@mdi/js';
 import { mdiChevronLeft } from '@mdi/js';
+
+async function getNewArival(){
+    const url = new URL('http://127.0.0.1:8000/api/v1/books/new_arival')
+    const response = await fetch(url,{
+        method: 'GET',
+        headers: {
+            'accept': 'application/json',
+        },
+    })
+
+    if (response.ok){
+        const result = await response.json()
+        return result
+    }
+    else {
+        console.error('Error:', response.statusText)
+    }
+}
 
 const iconChevronRight = ref(mdiChevronRight)
 const iconChevronLeft = ref(mdiChevronLeft)
@@ -11,6 +29,7 @@ const pathIconRight = iconChevronRight.value
 const pathIconLeft = iconChevronLeft.value
 
 const bookContainer = ref(null)
+const listBook = ref({})
 
 // Fungsi untuk scroll ke kiri
 const scrollLeft = () => {
@@ -25,6 +44,13 @@ const scrollRight = () => {
     bookContainer.value.scrollLeft += 200; // Geser konten 200px ke kanan
   }
 }
+
+onMounted(async() =>{
+    const fetchResult = await getNewArival()
+    listBook.value = fetchResult
+    console.log(fetchResult)
+    console.log(listBook)
+})
 
 
 </script>
@@ -45,94 +71,15 @@ const scrollRight = () => {
         
         <div id="book-container-new-arival"class="child-new-arival" ref="bookContainer">
 
-            <router-link to="book-details-library/tsukuru-tazaki" class="book-link">
+            <router-link :to="'book-details-library/'+book.id" class="book-link" v-for="book in listBook">
                 <div class="book-item-new-arival">
                     <div class="book-image-new-arival">
-                        <img src="../../assets/9786024248369_TSUKURU-TAZAKI-TANPA-WARNA-DAN-TAHUN-ZIARAHNYA.avif" alt="Book Cover">
+                        <img :src="'http://127.0.0.1:8000/'+book.cover"  alt="Book Cover">
                     </div>
                     <div class="book-detail-new-arival">
-                        <div id="book-detail-author">Haruki Murakami</div>
-                        <div id="book-detail-title">Tsukuru Tazaki dan Tahun Ziarahnya</div>
-                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
-                    </div>
-                </div>
-            </router-link>
-
-            <router-link to="book-details-library/burmese-days" class="book-link">
-                <div class="book-item-new-arival">
-                    <div class="book-image-new-arival">
-                        <img src="../../assets/Burmese_Days_cov_1.avif" alt="Book Cover">
-                    </div>
-                    <div class="book-detail-new-arival">
-                        <div id="book-detail-author">George Orwell</div>
-                        <div id="book-detail-title">Burmese Days</div>
-                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
-                    </div>
-                </div>
-            </router-link>
-
-            <router-link to="book-details-library/coming-up" class="book-link">
-                <div class="book-item-new-arival">
-                    <div class="book-image-new-arival">
-                        <img src="../../assets/Coming_Up_For_Air_cov.avif" alt="Book Cover">
-                    </div>
-                    <div class="book-detail-new-arival">
-                        <div id="book-detail-author">George Orwell</div>
-                        <div id="book-detail-title">Coming up for Air</div>
-                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
-                    </div>
-                </div>
-            </router-link>
-
-
-            <router-link to="book-details-library/twenty-thousand" class="book-link">
-                <div class="book-item-new-arival">
-                    <div class="book-image-new-arival">
-                        <img src="../../assets/dthbwjxghkyjxa8b2e8y9j.avif" alt="Book Cover">
-                    </div>
-                    <div class="book-detail-new-arival">
-                        <div id="book-detail-author">Jules Verne</div>
-                        <div id="book-detail-title">Twenty Thousand Leagues Under the Sea</div>
-                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
-                    </div>
-                </div>
-            </router-link>
-
-            <router-link to="book-details-library/blue-period" class="book-link">
-                <div class="book-item-new-arival">
-                    <div class="book-image-new-arival">
-                        <img src="../../assets/e-t04tv-vd.avif" alt="Book Cover">
-                    </div>
-                    <div class="book-detail-new-arival">
-                        <div id="book-detail-author">Tsubasa Yamaguchi</div>
-                        <div id="book-detail-title">Blue Period</div>
-                        <div id="book-detail-publisher">PGI</div>
-                    </div>
-                </div>
-            </router-link>
-
-            <router-link to="book-details-library/light-novel" class="book-link">
-                <div class="book-item-new-arival">
-                    <div class="book-image-new-arival">
-                        <img src="../../assets/vccgnce--2.avif" alt="Book Cover">
-                    </div>
-                    <div class="book-detail-new-arival">
-                        <div id="book-detail-author">Daisuke Aizawa</div>
-                        <div id="book-detail-title">Light Novel The Eminence in Shadow 3 - Special Set</div>
-                        <div id="book-detail-publisher">PGI</div>
-                    </div>
-                </div>
-            </router-link>
-
-            <router-link to="book-details-library/pulau-misterius" class="book-link">
-                <div class="book-item-new-arival">
-                    <div class="book-image-new-arival">
-                        <img src="../../assets/ximeinii9y.avif" alt="Book Cover">
-                    </div>
-                    <div class="book-detail-new-arival">
-                        <div id="book-detail-author">Jules Verne</div>
-                        <div id="book-detail-title">Pulau Misterius</div>
-                        <div id="book-detail-publisher">Kepustakaan Populer Gramedia</div>
+                        <div id="book-detail-author">{{ book.author }}</div>
+                        <div id="book-detail-title">{{ book.title }}</div>
+                        <div id="book-detail-publisher">{{ book.publisher }}</div>
                     </div>
                 </div>
             </router-link>

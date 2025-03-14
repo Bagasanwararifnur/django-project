@@ -1,58 +1,81 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiBookArrowLeftOutline } from '@mdi/js';
 
-const iconBookArrowLeftOutline = ref(mdiBookArrowLeftOutline)
+async function getDetails(id){
+  const url = new URL('http://127.0.0.1:8000/api/v1/books/get-byid')
+  url.searchParams.append('id', id)
+  const response = await fetch(url,
+    { method: 'GET',
+      headers: {
+        'accept': 'application/json',
+      },
+    }
+  )
 
+  if (response.ok){
+    const result = await response.json()
+    return result
+  }else{
+    console.error('Error:', response.status)
+  }
+
+}
+
+
+const router = useRouter()
+const bookDetails = ref({})
+const id = router.currentRoute.value.params.id
+
+const iconBookArrowLeftOutline = ref(mdiBookArrowLeftOutline)
 const pathIconBookArrowLeftOutline = iconBookArrowLeftOutline.value
+
+onMounted(async() =>{
+  const fetchResult = await getDetails(id)
+  bookDetails.value = fetchResult
+  console.log(fetchResult)
+})
+
 
 </script>
 
 <template>
     <div class="content-container">
        <div class="sub-container">
-            <img src="../../assets/ximeinii9y.avif" alt="Book Cover" class="cover-book">
+            <img :src="'http://127.0.0.1:8000/'+bookDetails.cover" alt="Book Cover" class="cover-book">
        </div>
 
        <div class="sub-container">
             <div class="details-container">
-                <div class="book-details" id="title">Pulau Misterius (The Mysterious Island)</div>
+                <div class="book-details" id="title">{{ bookDetails.title }}</div>
                 <div class="book-details" id="author">
                     <div class="sub-details-container">Author</div>
-                    <div class="sub-details-container">Jules Verne</div>
+                    <div class="sub-details-container">{{ bookDetails.author }}</div>
                 </div>
                 <div class="book-details" id="publisher">
                     <div class="sub-details-container">Publisher</div>
-                    <div class="sub-details-container">Gramedia Pustaka Utama</div>
+                    <div class="sub-details-container">{{ bookDetails.publisher }}</div>
                 </div>
                 <div class="book-details" id="publish-date">
                     <div class="sub-details-container">Tanggal Terbit</div>
-                    <div class="sub-details-container">24 November 1881</div>
+                    <div class="sub-details-container">{{ bookDetails.publication_date }}</div>
                 </div>
                 <div class="book-details" id="isbn">
                     <div class="sub-details-container">ISBN</div>
-                    <div class="sub-details-container">979-602-8568-2</div>
+                    <div class="sub-details-container">{{ bookDetails.isbn }}</div>
                 </div>
                 <div class="book-details" id="genre">
                     <div class="sub-details-container">Genre</div>
                     <div class="sub-details-container">
-                        <div class="genre-container">Fiksi</div>
-                        <div class="genre-container">Novel</div>
-                        <div class="genre-container">Sci-Fiction</div>
-                        <div class="genre-container">Misteri</div>
-                        <div class="genre-container">Survival</div>
-                        <div class="genre-container">Historical</div>
+                        <div class="genre-container" v-for='genreItem in bookDetails.genre'>{{ genreItem }}</div>
                     </div>
                 </div>
                 <div class="book-details" id="synopsis">
                     <div class="sub-details-container">Sinopsis</div>
                     <div class="sub-details-container">
-                        <p>Setelah membajak balon udara dari sebuah kamp Konfederasi, lima tawanan dan seekor anjing melarikan diri dari Perang Saudara Amerika. Sekitar delapan ribu kilometer kemudian, mereka jatuh dari awan ke sebuah pulau vulkanik yang belum dipetakan di tengah Samudra Pasifik. Melalui kerja sama, rekayasa, pengetahuan ilmiah, dan tekad, mereka berusaha membangun koloni dari nol. Namun pulau yang kaya akan sumber daya ini menyimpan rahasia gelap. Kelima orang itu mendapati mereka tidak sendirian. Seseorang mengintai mereka. Seseorang yang sudah mereka kenal dan akan berperan penting dalam nasib mereka kelak.</p>
-
-                        <p>“Apakah kita naik lagi?” “Tidak. Sebaliknya.” “Kita sedang turun?” “Lebih gawat daripada itu, Kapten! Kita sedang jatuh!” “Demi Tuhan, buang pemberat!” “Sudah! Karung terakhir sudah kosong!” “Apakah balonnya naik?” “Tidak!” “Aku mendengar bunyi seperti debur ombak. Di bawah gondola ini ada laut! Tidak sampai 150 meter dari kita!” “Buang semua beban! … Semuanya!” Demikianlah kata-kata lantang dan mengherankan yang menggema di udara, di atas gurun air nan luas Pasifik, sekitar pukul empat sore pada tanggal 23 Maret 1865.</p>
-
-                        <p>Sungguh tak terlupakan badai dahsyat dari timur laut yang terjadi pada hari ekuinoks tahun itu. Badai itu mengamuk tanpa jeda dari tanggal 18 sampai 26 Maret, menimbulkan kerusakan parah di Amerika, Eropa, dan Asia, meliputi jarak 3.000 kilometer dan merentang miring dari garis 35º LU hingga 40º LS. Kota porak-poranda, hutan tercerabut, pesisir luluh-lantak diterjang tsunami, kapal terdampar di pantai dalam jumlah ratusan, menurut berita terbit, berbagai daerah diratakan oleh tornado air yang menghancurkan segala sesuatu yang dilewatinya, ribuan orang binasa di darat atau tenggelam di laut; demikianlah jejak murka yang ditinggalkan oleh badai perusak ini. Badai ini melampaui bencana yang menghancurkan Havana dan Guadalupe dengan mengerikan, yang satu pada 25 Oktober 1810, satu lagi pada 26 Juli 1825.</p>
+                      {{ bookDetails.description }}
                     </div>
                 </div>
             </div>
@@ -62,7 +85,7 @@ const pathIconBookArrowLeftOutline = iconBookArrowLeftOutline.value
             <div class="book-borrow-container">
                 <div class="borrow-details" id="count">
                     <div class="sub-details-container">Quota in Library</div>
-                    <div class="sub-details-container">350</div>
+                    <div class="sub-details-container">{{ bookDetails.donated_count }}</div>
                 </div>
                 <button class="borrow-details" id="borrow-button">
                     <svg-icon type="mdi" :path="pathIconBookArrowLeftOutline"></svg-icon>
@@ -188,6 +211,7 @@ const pathIconBookArrowLeftOutline = iconBookArrowLeftOutline.value
     border-radius: 4px;
     transition: 0.3s;
     cursor: pointer;
+
   }
 
   .genre-container:hover{

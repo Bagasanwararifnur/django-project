@@ -1,6 +1,7 @@
 from .models import Book, BookDonated, BookBorrowed, BookOwned
 from rest_framework import serializers
 import datetime
+import json
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,6 +31,7 @@ class BookIsDonated(serializers.ModelSerializer):
 class BookLibrarySerializerDetails(serializers.ModelSerializer):
     # owner = BookIsDonated(many=True, source='owners')
     donated_count = serializers.SerializerMethodField()
+    genre = serializers.SerializerMethodField()
     # available = serializers.SerializerMethodField()
 
 
@@ -41,6 +43,9 @@ class BookLibrarySerializerDetails(serializers.ModelSerializer):
 
     def get_donated_count(self, obj):
         return obj.bookowned_set.filter(is_donated=True).count()
+    
+    def get_genre(self,obj):
+        return json.loads(obj.genre)
 
 
 class BookListLibrarySerializer(serializers.ModelSerializer):
@@ -63,7 +68,7 @@ class BookListLibraryBorrowSerializer(serializers.ModelSerializer):
         return obj.owned_id
 
     def get_book_detail(self,obj):
-        get_book = Book.objects.get(id=obj.book_id)
+        get_book = obj.book
         title = get_book.title
         author = get_book.author
         publisher = get_book.publisher
@@ -78,7 +83,7 @@ class BookListLibraryOwnedSerializer(serializers.ModelSerializer):
         fields = ['owned_id','book_id','book_detail']
 
     def get_book_detail(self,obj):
-        get_book = Book.objects.get(id=obj.book_id)
+        get_book = obj.book
         title = get_book.title
         author = get_book.author
         publisher = get_book.publisher

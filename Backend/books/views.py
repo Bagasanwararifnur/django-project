@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.db.models import Q
+from django.core.paginator import Paginator
 from .models import *
 from .serializers import *
 
@@ -41,6 +43,7 @@ import json
 @parser_classes([MultiPartParser, FormParser])
 def upload_book(request):
     dict_book = request.data.dict()
+    print(dict_book['genre'].split(','))
     dict_book['genre'] = json.dumps(dict_book['genre'].split(','))
     print(dict_book)
     publication_date = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -164,9 +167,12 @@ def donate_book(request):
 @parser_classes([MultiPartParser,FormParser])
 def get_books(request):
     book_id = request.GET.get('id')
-    books = Book.objects.get(id=book_id)
-    serializer = BookLibrarySerializerDetails(books)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    try:
+        books = Book.objects.get(id=book_id)
+        serializer = BookLibrarySerializerDetails(books)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Book.DoesNotExist:
+        return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
 
 # List Books of Author
 @swagger_auto_schema(
@@ -193,7 +199,9 @@ def books_by_author(request, author):
     method='get',
     tags=['Books'],
     manual_parameters=[
-        openapi.Parameter('pagination', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)
+        openapi.Parameter('paginationShown', openapi.IN_QUERY, type=openapi.TYPE_INTEGER),
+        openapi.Parameter('modeSearch', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('valueSearch', openapi.IN_QUERY, type=openapi.TYPE_STRING),
     ],
     responses={
         status.HTTP_200_OK: openapi.Response(description='List of Books in Library'),
@@ -204,17 +212,30 @@ def books_by_author(request, author):
 )
 @api_view(['GET'])
 def list_books(request):
-    pagination = request.GET.get('pagination')
-    if pagination == None:
-        pagination = 0
-    else:
-        pagination = int(pagination)-1
-
+    mode = request.GET.get('modeSearch')
+    value = request.GET.get('valueSearch')
+    pagination = int(request.GET.get('paginationShown', 1))  # Default ke halaman 1 jika tidak ada
     books = BookOwned.objects.filter(is_donated=True).values_list('book_id', flat=True).distinct()
-    all_books = Book.objects.filter(id__in=books)[pagination*10:(pagination+1)*10]
-    serializers = BookListLibrarySerializer(all_books, many=True)
-    
-    return Response(serializers.data,status=status.HTTP_200_OK)
+
+    filter_kwargs = {'id__in': books}
+    if mode == 'Title':
+        filter_kwargs['title__icontains'] = value
+    elif mode == 'Author':
+        filter_kwargs['author__icontains'] = value
+    elif mode == 'Publisher':
+        filter_kwargs['publisher__icontains'] = value
+
+    all_books = Book.objects.filter(**filter_kwargs)
+
+    paginator = Paginator(all_books, 10) 
+    paginated_books = paginator.get_page(pagination)
+
+    serializer = BookListLibrarySerializer(paginated_books, many=True)
+
+    return Response({
+        'listBook': serializer.data,
+        'number': paginator.num_pages 
+    }, status=status.HTTP_200_OK)
 
 # List Book in Borrowed Library
 @swagger_auto_schema(
@@ -332,33 +353,35 @@ def returned_book(request):
 #     serializer = BookSerializer(books, many=True)
 #     return Response(serializer.data)
 
-# # New Release Books
-# @swagger_auto_schema(
-#     method='get',
-#     tags=['Books'],
-#     responses={
-#         status.HTTP_200_OK: openapi.Response(description='New Release Books'),
-#     }
-# )
-# @api_view(['GET'])
-# def new_release_books(request):
-#     books = Book.objects.order_by('-release_date')[:5]
-#     serializer = BookSerializer(books, many=True)
-#     return Response(serializer.data)
+# New Release Books
+@swagger_auto_schema(
+    method='get',
+    tags=['Books'],
+    responses={
+        status.HTTP_200_OK: openapi.Response(description='New Release Books'),
+    }
+)
+@api_view(['GET'])
+def new_release_books(request):
+    books = BookOwned.objects.filter(is_donated=True).values_list('book_id', flat=True).distinct()
+    new_release = Book.objects.filter(id__in=books).order_by('-release_date')[:7]
+    serializer = BookListLibrarySerializer(new_release, many=True)
+    return Response(serializer.data)
 
-# # New Arival Books
-# @swagger_auto_schema(
-#     method='get',
-#     tags=['Books'],
-#     responses={
-#         status.HTTP_200_OK: openapi.Response(description='New Arrival'),
-#     }
-# )
-# @api_view(['GET'])
-# def new_arival_books(request):
-#     books = Book.objects.order_by('-publication_date')[:5]
-#     serializer = BookSerializer(books, many=True)
-#     return Response(serializer.data)
+# New Arival Books
+@swagger_auto_schema(
+    method='get',
+    tags=['Books'],
+    responses={
+        status.HTTP_200_OK: openapi.Response(description='New Arrival'),
+    }
+)
+@api_view(['GET'])
+def new_arival_books(request):
+    books = BookOwned.objects.filter(is_donated=True).values_list('book_id', flat=True).distinct()
+    new_arival = Book.objects.filter(id__in=books).order_by('-publication_date')[:7]
+    serializer = BookListLibrarySerializer(new_arival, many=True)
+    return Response(serializer.data)
 
 # # # Donate Book
 # # @swagger_auto_schema(
@@ -435,6 +458,36 @@ def borrow_book(request):
             return Response('Book not found', status=status.HTTP_404_NOT_FOUND)
     else:
         return Response('Authentication required', status=status.HTTP_401_UNAUTHORIZED)
+
+# Search By Genre
+@swagger_auto_schema(
+    method='get',
+    tags=['Books'],
+    manual_parameters=[
+        openapi.Parameter('genre', openapi.IN_QUERY, type=openapi.TYPE_ARRAY,items=openapi.Items(type=openapi.TYPE_STRING)),
+    ],
+    responses={
+        status.HTTP_200_OK: openapi.Response(description='Books of the given genre'),
+        status.HTTP_404_NOT_FOUND: openapi.Response(description='Not Found'),
+    },
+)
+@api_view(['GET'])
+def search_by_genre(request):
+    print(request.GET.getlist('genre'))
+    genre = request.GET.getlist('genre')[0].split(',')
+    query = Q()
+    for g in genre:
+        query |= Q(genre__icontains=f'{g}')  # Strip untuk menghapus spasi ekstra
+    
+    print(query)
+
+    books = Book.objects.filter(query)
+
+    if not books.exists():
+        return Response({'message': 'No Books Found with the given Genre'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = BookListLibrarySerializer(books, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
     
 # # Returned Book
 # @swagger_auto_schema(

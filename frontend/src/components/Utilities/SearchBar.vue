@@ -64,7 +64,7 @@ function handleSubmit(){
                 </li>
                 <li @click="SelectedDropdown">Author</li>
                 <li @click="SelectedDropdown">Publisher</li>
-                <li @click="SelectedDropdown">Genre</li>
+                <li @click="SelectedDropdown">Title</li>
             </ul>
         </div>
         <input type="text" v-model="inputText">
