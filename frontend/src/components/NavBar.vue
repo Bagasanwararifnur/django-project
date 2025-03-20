@@ -1,6 +1,6 @@
 <script setup>
 import LoginRibbon from "./LoginRibbon.vue";
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiHomeVariantOutline } from '@mdi/js';
 import { mdiLibraryOutline } from '@mdi/js';
@@ -9,7 +9,6 @@ import { mdiInformationOutline } from '@mdi/js';
 import { mdiFaceAgent } from '@mdi/js';
 import { mdiLogin } from '@mdi/js';
 import { mdiMenu } from '@mdi/js';
-
 
 const IconHome = ref(mdiHomeVariantOutline);
 const IconLibrary = ref(mdiLibraryOutline);
@@ -44,15 +43,13 @@ function handleShowMenuClick() {
 }
 
 
-
-defineProps(["selectedComponent"]);
+defineProps(["selectedComponent", 'isLogin']);
 
 
 </script>
-
 <template>
     <div id="nav-container">
-        <div class="menu-button" id="menu-sandwich" @click="handleShowMenuClick">
+        <div class="menu-button" id="menu-sandwich" @click="handleShowMenuClick" v-if="isLogin">
             <svg-icon type="mdi" :path="pathIconMenu" class="logo-nav"></svg-icon>
         </div>
         <div class="menu-button" @click="$emit('update:selectedComponent', 'HomePage')">
@@ -76,7 +73,7 @@ defineProps(["selectedComponent"]);
             Support
         </div>
         
-        <router-link to = '/login' class="menu-button" id="login-button">
+        <router-link to = '/login' class="menu-button" id="login-button" v-if="!isLogin">
             <svg-icon type="mdi" :path="pathIconLogin" class="logo-nav"></svg-icon>
             Login
         </router-link>

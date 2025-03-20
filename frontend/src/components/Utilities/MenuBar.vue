@@ -8,6 +8,7 @@
         <div class="menu-item-container">
             <router-link to='/book-owned' class="side-menu-item">Book Owned</router-link>
             <router-link to='/book-borrowed' class="side-menu-item">Book Borrowed</router-link> 
+            <router-link to='/profile-details' class="side-menu-item">Profile Details</router-link>
         </div>
     </div>
 </template>
@@ -19,7 +20,7 @@
     #menu-container {
         height: 100vh;
         position: absolute;
-        /* border: 2px solid black; */
+        /* border: 2px sol window.location.reload(); d black; */
         box-sizing: border-box;
         display: grid;
         /* width: 200px; */

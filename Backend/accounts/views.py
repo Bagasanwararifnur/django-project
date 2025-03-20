@@ -56,15 +56,14 @@ def login_account(request):
     method='get',
     tags=['Accounts'],
     responses={
-        status.HTTP_200_OK: openapi.Response('User data', CustomUserSerializer),
+        status.HTTP_200_OK: openapi.Response('Authorized',None),
         status.HTTP_401_UNAUTHORIZED: openapi.Response('Authentication failed', None)
     }
 )
 @api_view(['GET'])
-def coba_authentication(request):
+def authorization_check(request):
     if request.user.is_authenticated:
-        serializer = CustomUserSerializerGet(request.user)
-        return Response(serializer.data)
+        return Response('Authorized',status=status.HTTP_200_OK)
     return Response('Unauthorazied', status=status.HTTP_401_UNAUTHORIZED)
 
 @swagger_auto_schema(

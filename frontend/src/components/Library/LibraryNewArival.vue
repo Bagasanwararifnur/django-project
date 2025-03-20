@@ -48,8 +48,6 @@ const scrollRight = () => {
 onMounted(async() =>{
     const fetchResult = await getNewArival()
     listBook.value = fetchResult
-    console.log(fetchResult)
-    console.log(listBook)
 })
 
 
