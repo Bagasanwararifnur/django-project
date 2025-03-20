@@ -14,8 +14,11 @@ urlpatterns = [
     path('books/bought', book_bought, name='bought_book'),
     path('books/get-byid', get_books, name='get_book'),
     path('books/list', list_books, name='list_books'),
-    path('books/borrowed-list', list_books_borrowed, name='list_books_borrowed'),
-    path('books/owned-list', list_books_owned, name='list_books_borrowed'),
+    # path('books/borrowed-list', list_books_borrowed, name='list_books_borrowed'),
+    # path('books/owned-list', list_books_owned, name='list_books_borrowed'),
     path('books/returned', returned_book, name='return_books'),
     path('books/genre',search_by_genre, name='search_by_genre'),
+    path('books/book-owned-search', book_owned, name='search_books'),
+    path('books/book-borrow-search', book_borrowed, name='search_borrowed_books'),
+    path('token/getcsrf', csrf_token, name='get_csrf'),
 ]

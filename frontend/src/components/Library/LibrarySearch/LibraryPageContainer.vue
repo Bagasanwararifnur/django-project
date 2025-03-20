@@ -28,15 +28,11 @@ async function getData(modeSearch, valueSearch, paginationShown) {
     }
 }
 
-
 const router = useRouter()
 const Mode = router.currentRoute.value.query.modeSearch
 const valueSearch = router.currentRoute.value.query.valueSearch
 
-const listBook = ref([
-    { 'img' : "src/assets/dthbwjxghkyjxa8b2e8y9j.avif", 'author' : "Jules Verne", 'name' : "Twenty Thousand Under the Sea", 'publisher':'Kepustakaan Populer Gramedia'},
-    { 'img' : "/src/assets/ximeinii9y.avif", 'author' : "Jules Verne", 'name' : "Pulau Misterius", 'publisher':'Kepustakaan Populer Gramedia'},
-])
+const listBook = ref()
 // const numberPagination = ref(Math.floor(listBook.value.length/10+1))
 const numberPagination = ref()
 const paginationShown = ref()
@@ -46,9 +42,6 @@ if (router.currentRoute.value.query.paginationShown === undefined){
 }else{
     paginationShown.value = parseInt(router.currentRoute.value.query.paginationShown)
 }
-
-const stateReturnedModal = ref(false)
-const details = ref()
 
 const iconSkipNext = ref(mdiSkipNext)
 const iconSkipForward = ref(mdiSkipForward)

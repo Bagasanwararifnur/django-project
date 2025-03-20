@@ -1,6 +1,7 @@
 <script setup>
 
 import { ref, useTemplateRef, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiSkipNext } from '@mdi/js';
 import { mdiSkipForward } from '@mdi/js';
@@ -8,14 +9,45 @@ import { mdiSkipPrevious } from '@mdi/js';
 import { mdiSkipBackward } from '@mdi/js';
 import ModalReturned from './ModalReturned.vue';
 
-const listBook = ref([
-    { 'img' : "/src/assets/ximeinii9y.avif", 'author' : "Jules Verne", 'name' : "Pulau Misterius", 'publisher':'Kepustakaan Populer Gramedia'},
-    { 'img' : "src/assets/dthbwjxghkyjxa8b2e8y9j.avif", 'author' : "Jules Verne", 'name' : "Twenty Thousand Under the Sea", 'publisher':'Kepustakaan Populer Gramedia'},
-])
+async function getDataBorrow(valueSearch, paginationShown){
+    const url = new URL('http://127.0.0.1:8000/api/v1/books/book-borrow-search')
+    url.searchParams.append('valueSearch',valueSearch)
+    url.searchParams.append('paginationShown', paginationShown)
+
+    const response = await fetch(url,{
+        method: 'GET',
+        headers: {
+            'accept': 'application/json',
+        },
+        credentials: 'include',
+    })
+
+    if (response.ok){
+        const result = await response.json()
+        return result
+    }
+} 
+
+const router = useRouter()
+
+const listBook = ref()
 
 // const numberPagination = ref(Math.floor(listBook.value.length/10+1))
-const numberPagination = ref(10)
-const paginationShown = ref(1)
+const numberPagination = ref()
+const paginationShown = ref()
+const valueSearch = ref()
+
+if (router.currentRoute.value.query.paginationShown === undefined){
+    paginationShown.value = 1
+}else{
+    paginationShown.value = parseInt(router.currentRoute.value.query.paginationShown)
+}
+
+if (router.currentRoute.value.query.valueSearch === undefined){
+    valueSearch.value = ''
+}else{
+    valueSearch.value = router.currentRoute.value.query.valueSearch
+}
 
 const stateReturnedModal = ref(false)
 const details = ref()
@@ -42,13 +74,14 @@ function readBook(index){
     stateReturnedModal.value = true
 }
 
-function donatedBook(index){
+function returnedBook(index){
     const item = itemRefs.value[index]
+    const borrowId = item.id
     const author = item.querySelector("#book-detail-author").innerHTML
     const title = item.querySelector("#book-detail-title").innerHTML
     const publisher = item.querySelector("#book-detail-publisher").innerHTML
 
-    details.value = {author, title, publisher}
+    details.value = {author, title, publisher, borrowId}
 
     stateReturnedModal.value = true
 }
@@ -79,47 +112,66 @@ watch(paginationShown, (newValue) =>{
     }
 })
 
-onMounted(() =>{
+onMounted( async() =>{
+    const fetchResult = await getDataBorrow(valueSearch.value, paginationShown.value)
+    listBook.value = fetchResult.listBook
+    numberPagination.value = fetchResult.number
+
+    const buttonNext = document.querySelector("#next-button")
+    const buttonLast = document.querySelector("#last-button")
     const buttonPrev = document.querySelector("#previous-button")
     const buttonFirst = document.querySelector("#first-button")
-    buttonFirst.disabled = true
-    buttonPrev.disabled = true
+
+    if(paginationShown.value === 1 && paginationShown.value === numberPagination.value){
+        buttonPrev.disabled = true
+        buttonFirst.disabled = true
+        buttonNext.disabled = true
+        buttonLast.disabled = true
+    }
+    else if(paginationShown.value === 1 && numberPagination.value !== 1){
+        buttonPrev.disabled = true
+        buttonFirst.disabled = true
+        buttonNext.disabled = false
+        buttonLast.disabled = false
+        
+    }
+    else if(paginationShown.value === numberPagination.value){
+        buttonNext.disabled = true
+        buttonLast.disabled = true
+        buttonPrev.disabled = false
+        buttonFirst.disabled = false
+    }
+    else{
+        buttonNext.disabled = false
+        buttonLast.disabled = false
+        buttonPrev.disabled = false
+        buttonFirst.disabled = false
+    }
 })
 
-
 function firstPage(){
+    if (paginationShown.value === 1) return
     paginationShown.value = 1
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function lastPage(){
+    if (paginationShown.value === numberPagination.value) return
     paginationShown.value = numberPagination.value
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function nextPage(){
-    if(paginationShown.value < numberPagination.value){
-        paginationShown.value++
-    }
-    else if(paginationShown.value === numberPagination.value){
-        paginationShown.value = numberPagination.value
-    }
-    else{
-        paginationShown.value = 1
-    }
+    if (paginationShown.value === numberPagination.value) return
+    paginationShown.value++
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function previousPage(){
-    if(paginationShown.value > 1){
-        paginationShown.value--
-        
-    }
-    else if(paginationShown.value === 1){
-        paginationShown.value = 1
-    }
-    else{
-        paginationShown.value = numberPagination.value
-    }
+    if (paginationShown.value === 1) return
+    paginationShown.value--
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
-
 
 
 </script>
@@ -131,14 +183,14 @@ function previousPage(){
 
                     <div class="item-container">
 
-                        <div class="book-item" v-for="(book,index) in listBook" ref="books">
+                        <div class="book-item" v-for="(book,index) in listBook" ref="books" :id="book.book_detail.borrow_id">
                             <div class="book-item-details">
-                                <img :src="book.img" alt="Book Cover">
+                                <img :src="'http://127.0.0.1:8000/'+book.book_detail.cover" alt="Book Cover">
                             </div>
                             <div class="book-item-details">
-                                <div id="book-detail-author" class="book-informations">{{ book.author }}</div>
-                                <div id="book-detail-title" class="book-informations">{{ book.name }}</div>
-                                <div id="book-detail-publisher" class="book-informations">{{ book.publisher }}</div>
+                                <div id="book-detail-author" class="book-informations">{{ book.book_detail.author }}</div>
+                                <div id="book-detail-title" class="book-informations">{{ book.book_detail.title }}</div>
+                                <div id="book-detail-publisher" class="book-informations">{{ book.book_detail.publisher }}</div>
                             </div>
                             <div class="book-item-details">
                                 <button class="book-item-actions" @click="readBook(index)">Read</button>
@@ -197,8 +249,8 @@ function previousPage(){
         width: 95%;
         height: 95%;
         display: grid;
-        grid-template-columns: repeat(5,auto);
-        grid-template-rows: repeat(2,auto);
+        grid-template-columns: repeat(5,1fr);
+        grid-template-rows: repeat(2,1fr);
         justify-items: center;
         align-items: center;
     }

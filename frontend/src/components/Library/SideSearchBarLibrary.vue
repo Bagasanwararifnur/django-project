@@ -40,7 +40,6 @@ function handleSubmit(){
     const getInputText = inputText.value
     const getModeValue = Mode.value
     console.log(`Input Text: ${getInputText}, Mode: ${getModeValue}`)
-    console.log(router.currentRoute.value.query.pageRoot)
 
     router.push({ path: '/library-search', query: { modeSearch: Mode.value, valueSearch: inputText.value } });
 }

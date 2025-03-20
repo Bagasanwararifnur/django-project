@@ -16,8 +16,11 @@ const router = createRouter({
     history : createWebHistory(),
     routes : [
         { path : '/', component: RootPage, props: route => ({ pageRoot: route.query.pageRoot || 'HomePage' })},
-        { path : '/book-owned', component : BookOwned},
-        { path : '/book-borrowed', component : BookBorrowed},
+        { path : '/book-owned', component : BookOwned, props: route => ({ valueSearch: route.query.valueSearch || '',
+            paginationShown : route.query.paginationShown || '1'
+        })},
+        { path : '/book-borrowed', component : BookBorrowed, props: route => ({ valueSearch: route.query.valueSearch || '',
+            paginationShown : route.query.paginationShown || '1'})},
         { path : '/profile-details', component : ProfileDetails},
         { path : '/login', component: LoginPage},
         { path : '/book-details-library/:id', component: BookDetailsLibrary, props: true },

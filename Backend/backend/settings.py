@@ -139,11 +139,19 @@ REST_FRAMEWORK = {
 }
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'x-csrftoken',  # Tambahkan header ini
+    # tambahkan header lain jika perlu
+]
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000/",
+                        "http://127.0.0.1:5173/",
+                        "http://localhost:5173"]
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

@@ -42,7 +42,7 @@ class BookLibrarySerializerDetails(serializers.ModelSerializer):
                   'cover', 'donated_count']
 
     def get_donated_count(self, obj):
-        return obj.bookowned_set.filter(is_donated=True).count()
+        return obj.bookowned_set.filter(is_donated=True, is_borrowed=False).count()
     
     def get_genre(self,obj):
         return json.loads(obj.genre)
@@ -56,16 +56,46 @@ class BookListLibrarySerializer(serializers.ModelSerializer):
 
 
 
-class BookListLibraryBorrowSerializer(serializers.ModelSerializer):
+# class BookListLibraryBorrowSerializer(serializers.ModelSerializer):
+#     book_detail = serializers.SerializerMethodField()
+#     borrow_id = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = BookOwned
+#         fields = ['borrow_id','book_id','book_detail']
+
+#     def get_borrow_id(self, obj):
+#         return obj.owned_id
+
+#     def get_book_detail(self,obj):
+#         get_book = obj.book
+#         title = get_book.title
+#         author = get_book.author
+#         publisher = get_book.publisher
+#         cover = get_book.cover
+#         return {'title':title, 'author':author, 'publisher':publisher, 'cover':f'/media/{str(cover)}'}
+
+# class BookListLibraryOwnedSerializer(serializers.ModelSerializer):
+#     book_detail = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = BookOwned
+#         fields = ['owned_id','book_id','book_detail']
+
+#     def get_book_detail(self,obj):
+#         get_book = obj.book
+#         title = get_book.title
+#         author = get_book.author
+#         publisher = get_book.publisher
+#         cover = get_book.cover
+#         return {'title':title, 'author':author, 'publisher':publisher, 'cover':f'/media/{str(cover)}'}
+
+class BookOwnedLibrarySerializer(serializers.ModelSerializer):
     book_detail = serializers.SerializerMethodField()
-    borrow_id = serializers.SerializerMethodField()
 
     class Meta:
         model = BookOwned
-        fields = ['borrow_id','book_id','book_detail']
-
-    def get_borrow_id(self, obj):
-        return obj.owned_id
+        fields = ['book_detail']
 
     def get_book_detail(self,obj):
         get_book = obj.book
@@ -73,14 +103,15 @@ class BookListLibraryBorrowSerializer(serializers.ModelSerializer):
         author = get_book.author
         publisher = get_book.publisher
         cover = get_book.cover
-        return {'title':title, 'author':author, 'publisher':publisher, 'cover':f'/media/{str(cover)}'}
-
-class BookListLibraryOwnedSerializer(serializers.ModelSerializer):
+        owned_nid = obj.owned_id
+        return {'title':title, 'author':author, 'publisher':publisher, 'cover':f'/media/{str(cover)}', 'owned_id':owned_nid}
+    
+class BookBorrowedLibrarySerializer(serializers.ModelSerializer):
     book_detail = serializers.SerializerMethodField()
 
     class Meta:
-        model = BookOwned
-        fields = ['owned_id','book_id','book_detail']
+        model = BookBorrowed
+        fields = ['book_detail']
 
     def get_book_detail(self,obj):
         get_book = obj.book
@@ -88,4 +119,5 @@ class BookListLibraryOwnedSerializer(serializers.ModelSerializer):
         author = get_book.author
         publisher = get_book.publisher
         cover = get_book.cover
-        return {'title':title, 'author':author, 'publisher':publisher, 'cover':f'/media/{str(cover)}'}
+        borrow_nid = obj.owned_id
+        return {'title':title, 'author':author, 'publisher':publisher, 'cover':f'/media/{str(cover)}', 'borrow_id': borrow_nid}
