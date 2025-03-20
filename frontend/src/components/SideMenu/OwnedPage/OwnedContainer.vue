@@ -67,9 +67,6 @@ const itemRefs = useTemplateRef("books")
 
 function readBook(index){
     const item = itemRefs.value[index]
-    console.log(item.querySelector("#book-detail-author").innerHTML)
-    console.log(item.querySelector("#book-detail-title").innerHTML)
-    console.log(item.querySelector("#book-detail-publisher").innerHTML)
     stateReturnedModal.value = true
 }
 

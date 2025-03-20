@@ -451,7 +451,7 @@ def borrow_book(request):
                     borrower_check.borrower_name = borrower_name
                     borrower_check.save()
 
-                    return Response('Book borrowed successfully', status=status.HTTP_201_CREATED)
+                    return Response('Book borrowed successfully', status=status.HTTP_200_OK)
 
                 else:
                     return Response('No available copies of this book', status=status.HTTP_404_NOT_FOUND)

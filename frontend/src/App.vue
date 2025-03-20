@@ -18,11 +18,9 @@ async function loginCheck(){
   if (response.ok) {
     const result = await response.json()
     localStorage.setItem('isLogin',true)
-    console.log(localStorage.getItem('isLogin'))
   }
   else {
     localStorage.setItem('isLogin',false)
-    console.log(localStorage.getItem('isLogin'))
   }
 }
 
@@ -51,7 +49,6 @@ watch(() => router.currentRoute.value.path, (newValue)=>{
 onMounted(async() => {
   await loginCheck()
   isLogin.value = localStorage.getItem('isLogin') === 'true'
-  console.log(isLogin.value)
 })
 
 

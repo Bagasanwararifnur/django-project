@@ -39,7 +39,6 @@ async function SelectedDropdown(event) {
 function handleSubmit(){
     const getInputText = inputText.value
     const getModeValue = Mode.value
-    console.log(`Input Text: ${getInputText}, Mode: ${getModeValue}`)
 
     router.push({ path: '/library-search', query: { modeSearch: Mode.value, valueSearch: inputText.value } });
 }

@@ -29,9 +29,7 @@ async function submitButton(){
     body: formData,
     credentials: 'include',
   })
-  console.log(response)
   if (response.ok) {
-    console.log("Login sukses! Redirecting...");
     setTimeout(() => {
       router.replace({path:'/'}).then(() =>{
         window.location.reload()

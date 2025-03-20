@@ -38,7 +38,6 @@ const emit = defineEmits(['update:selectedComponent', 'update:showMenu']);
 
 function handleShowMenuClick() {
   showMenu.value = !showMenu.value;  // Toggle showMenu    
-  console.log(`showMenu changed to: ${!showMenu.value}`);
   emit('update:showMenu', showMenu.value)
 }
 

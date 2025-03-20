@@ -13,7 +13,6 @@ async function LogoutSubmit(){
         credentials : 'include'
     })
     if(response.ok){
-        console.log('Logged out successfully')
         setTimeout(() => {
             router.replace({path : '/'}).then(() =>{
                 window.location.reload()

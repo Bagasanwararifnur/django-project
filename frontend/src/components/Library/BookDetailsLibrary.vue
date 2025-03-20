@@ -3,6 +3,42 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiBookArrowLeftOutline } from '@mdi/js';
+import ModalBorrow from './ModalBorrow.vue'
+
+async function generateCsrf(){
+    const url = 'http://127.0.0.1:8000/api/v1/token/getcsrf'
+    const response = await fetch(url,{
+        method: 'GET',
+        credentials: 'include',
+    })
+    const data = await response.json()
+    return data
+}
+
+async function borrowBook(bookId,csrf){
+  const url = new URL('http://127.0.0.1:8000/api/v1/books/borrowed')
+  const formData = new FormData()
+  formData.append('book_id', bookId)
+
+  const response = await fetch(url,{
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'X-CSRFToken': csrf,
+    },
+    body: formData, // replace with user id
+    credentials: 'include',
+  })
+  if (response.ok){
+    const result = {status : response.status, message : await response.json()}
+    console.log(result)
+    return result
+  }else{
+    const result = {status : response.status, message : await response.json()}
+    return result
+  }
+}
+
 
 async function getDetails(id){
   const url = new URL('http://127.0.0.1:8000/api/v1/books/get-byid')
@@ -27,16 +63,39 @@ async function getDetails(id){
 
 const router = useRouter()
 const bookDetails = ref({})
+const modalShown = ref(false)
+const messageShown = ref('')
 const id = router.currentRoute.value.params.id
 
 const iconBookArrowLeftOutline = ref(mdiBookArrowLeftOutline)
 const pathIconBookArrowLeftOutline = iconBookArrowLeftOutline.value
 
 onMounted(async() =>{
+  const borrowButton = document.querySelector('#borrow-button')
   const fetchResult = await getDetails(id)
   bookDetails.value = fetchResult
-  console.log(fetchResult)
+  if (bookDetails.value.donated_count === 0){
+    borrowButton.disabled = true
+  }
 })
+
+async function borrowHandler(){
+  const csrf = await generateCsrf()
+  const fetchResult = await borrowBook(id,csrf.csrfToken)
+  if (fetchResult.status === 200){
+    modalShown.value = true
+    messageShown.value = 'Book borrowed successfully'
+    setTimeout(() => {
+      window.location.reload()
+    },1500);
+  }else{
+    modalShown.value = true
+    messageShown.value = `Failed to borrow book, Error : ${fetchResult.message}`
+    setTimeout(() => {
+      window.location.reload()
+    },1500);
+  }
+}
 
 
 </script>
@@ -87,18 +146,20 @@ onMounted(async() =>{
                     <div class="sub-details-container">Quota in Library</div>
                     <div class="sub-details-container">{{ bookDetails.donated_count }}</div>
                 </div>
-                <button class="borrow-details" id="borrow-button">
+                <button class="borrow-details" id="borrow-button" @click="borrowHandler">
                     <svg-icon type="mdi" :path="pathIconBookArrowLeftOutline"></svg-icon>
                     Borrow
                 </button>
             </div>
        </div>
     </div>
+
+<ModalBorrow v-if="modalShown" :message="messageShown"/>
 </template>
 
 <style scoped>
 
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
 
   .content-container {
     display: grid;
@@ -292,5 +353,11 @@ onMounted(async() =>{
   .borrow-details:last-child * {
     margin-right: 5px;
   }
+
+  button#borrow-button:disabled{
+        background-color: gray;
+        color: lightgray;
+        cursor: not-allowed;
+    }
 
 </style>

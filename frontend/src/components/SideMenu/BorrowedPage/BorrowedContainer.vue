@@ -68,9 +68,6 @@ const itemRefs = useTemplateRef("books")
 
 function readBook(index){
     const item = itemRefs.value[index]
-    console.log(item.querySelector("#book-detail-author").innerHTML)
-    console.log(item.querySelector("#book-detail-title").innerHTML)
-    console.log(item.querySelector("#book-detail-publisher").innerHTML)
     stateReturnedModal.value = true
 }
 
@@ -152,25 +149,25 @@ onMounted( async() =>{
 function firstPage(){
     if (paginationShown.value === 1) return
     paginationShown.value = 1
-    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch.value , paginationShown: paginationShown.value}});
 }
 
 function lastPage(){
     if (paginationShown.value === numberPagination.value) return
     paginationShown.value = numberPagination.value
-    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch.value , paginationShown: paginationShown.value}});
 }
 
 function nextPage(){
     if (paginationShown.value === numberPagination.value) return
     paginationShown.value++
-    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch.value , paginationShown: paginationShown.value}});
 }
 
 function previousPage(){
     if (paginationShown.value === 1) return
     paginationShown.value--
-    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch , paginationShown: paginationShown.value}});
+    router.push({ path: '/book-borrowed', query: {valueSearch: valueSearch.value , paginationShown: paginationShown.value}});
 }
 
 
