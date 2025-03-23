@@ -58,3 +58,12 @@ class BookOwned(models.Model):
 
     def __str__(self):
         return f"Book: {self.book.title} - Bought by: {self.bought_by}"
+
+class BookComment(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment: {self.comment} - By: {self.user.username}"
