@@ -41,9 +41,6 @@ function handleSubmit(){
     const getInputText = inputText.value
     const getModeValue = Mode.value
     const querySearch = router.currentRoute.value.query.pageRoot
-    console.log(`Input Text: ${getInputText}, Mode: ${getModeValue}`)
-    console.log(router.currentRoute.value.query.pageRoot)
-
     if (querySearch === 'LibraryPage'){
         router.push({ path: '/library-search', query: { modeSearch: Mode.value, valueSearch: inputText.value } });
     }
@@ -64,7 +61,7 @@ function handleSubmit(){
                 </li>
                 <li @click="SelectedDropdown">Author</li>
                 <li @click="SelectedDropdown">Publisher</li>
-                <li @click="SelectedDropdown">Genre</li>
+                <li @click="SelectedDropdown">Title</li>
             </ul>
         </div>
         <input type="text" v-model="inputText">

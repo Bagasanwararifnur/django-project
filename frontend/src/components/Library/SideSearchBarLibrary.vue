@@ -39,8 +39,6 @@ async function SelectedDropdown(event) {
 function handleSubmit(){
     const getInputText = inputText.value
     const getModeValue = Mode.value
-    console.log(`Input Text: ${getInputText}, Mode: ${getModeValue}`)
-    console.log(router.currentRoute.value.query.pageRoot)
 
     router.push({ path: '/library-search', query: { modeSearch: Mode.value, valueSearch: inputText.value } });
 }
@@ -58,7 +56,7 @@ function handleSubmit(){
                 </li>
                 <li @click="SelectedDropdown">Author</li>
                 <li @click="SelectedDropdown">Publisher</li>
-                <li @click="SelectedDropdown">Genre</li>
+                <li @click="SelectedDropdown">Title</li>
             </ul>
         </div>
         <input type="text" placeholder="Search..." class="input-searchbar" v-model="inputText">

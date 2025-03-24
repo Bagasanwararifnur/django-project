@@ -1,6 +1,41 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+async function generateCsrf(){
+    const url = 'http://127.0.0.1:8000/api/v1/token/getcsrf'
+    const response = await fetch(url,{
+        method: 'GET',
+        credentials: 'include',
+    })
+    const data = await response.json()
+    return data
+}
+
+async function returnedFetch(borrowId, csrf){
+    const url = new URL ('http://127.0.0.1:8000/api/v1/books/returned')
+    const formData = new FormData()
+    formData.append('borrow_id', borrowId)
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'accept': 'application/json',
+            'X-CSRFToken': csrf,
+        },
+        body: formData,
+        credentials: 'include',
+    })
+
+    if (response.ok){
+        return true
+    }
+    else {
+        return false;
+    }
+}
+
+const router =  useRouter()
 const stateReturned = ref(true)
 
 const emitModal = defineEmits(['update:stateReturned']);
@@ -11,15 +46,22 @@ const props = defineProps({
             title: '',
             author: '',
             publisher: '',
+            borrowId:'',
         })
     },
 });
 
-function returned(){
+async function returned(){
+    const csrf = await generateCsrf()
+    const result = await returnedFetch(props.detailsBook.borrowId, csrf.csrfToken)
+    if (result){
+        stateReturned.value = true;
+        router.push({path:router.currentRoute.value.path}).then(() => {
+            window.location.reload()
+        })
+    }
     stateReturned.value = false;
     emitModal('update:stateReturned', stateReturned.value)
-    console.log(stateReturned.value)
-    console.log(props.detailsBook.title)
 }
 
 function close(){

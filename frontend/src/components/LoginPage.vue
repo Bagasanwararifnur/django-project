@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiFacebook } from '@mdi/js';
 import { mdiInstagram } from '@mdi/js';
@@ -10,70 +11,34 @@ const iconInstagram = ref(mdiInstagram)
 const pathIconFacebook = iconFacebook.value
 const pathIconInstagram = iconInstagram.value
 
-// import { ref } from 'vue'
-// const name = ref('')
-// const password = ref('')
+const name = ref('')
+const password = ref('')
+const router = useRouter()
 
-// async function submitButton () {
-//   const url = 'http://127.0.0.1:8000/api/v1/accounts/login'
-//   const formData = new FormData()
-//   formData.append('username', name.value)
-//   formData.append('password', password.value)
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     headers: {
-//       'accept': 'application/json',
-//     },
-//     body: formData,
-//     credentials: 'include',
-//   });
+async function submitButton(){
+  const url = 'http://127.0.0.1:8000/api/v1/accounts/login'
+  const formData = new FormData()
+  formData.append('username', name.value)
+  formData.append('password', password.value)
 
-//   if (response.ok){
-//     const result = await response.json()
-//     console.log(result)
-//   }
-//   else {
-//     console.error('Error:', response.status)
-//   }
-// }
-
-
-// async function checkButton () {
-//   const url = 'http://127.0.0.1:8000/api/v1/accounts/coba_authentication'
-//   const response = await fetch(url, {
-//     method: 'GET',
-//     headers: {
-//       'accept': 'application/json',
-//     },
-//     credentials: 'include',
-//   })
-
-//   if (response.ok){
-//     const result = await response.json()
-//     console.log(result)
-//   }
-//   else {
-//     console.error('Error:', response.status)
-//   }
-// }
-
-// async function logoutButton (){
-//   const url ='http://127.0.0.1:8000/api/v1/accounts/logout';
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     headers: {
-//       'accept': 'application/json',
-//     },
-//     credentials: 'include',
-//   });
-//   if (response.ok){
-//     const result = await response.json()
-//     console.log(result)
-//   }
-//   else {
-//     console.error('Error:', response.status)
-//   }
-// }
+  const response = await fetch(url,{
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+    },
+    body: formData,
+    credentials: 'include',
+  })
+  if (response.ok) {
+    setTimeout(() => {
+      router.replace({path:'/'}).then(() =>{
+        window.location.reload()
+      });
+    }, 2000);
+  } else {
+    console.log("Login gagal");
+  }
+}
 
 
 </script>

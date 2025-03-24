@@ -4,6 +4,10 @@ from .views import *
 urlpatterns =[
     path('accounts/create', create_account, name='create_account'),
     path('accounts/login', login_account, name='login_account'),
-    path('accounts/coba_authentication', coba_authentication, name='coba_authentication'),
+    path('accounts/authorization_check', authorization_check, name='coba_authentication'),
+    path('accounts/email_test', send_email_test, name='email_test'),
+    path('accounts/change_password', change_password, name='change_password'),
+    path('accounts/forgot_password',forgot_password,name='forgot_password'),
+    path('accounts/reset_password', change_password_forgot_password, name='reset_password'),
     path('accounts/logout', logout_account, name='logout_account'),
 ]

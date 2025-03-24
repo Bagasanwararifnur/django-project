@@ -1,88 +1,25 @@
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 
-
-async function generateCsrf(){
-    const url = 'http://127.0.0.1:8000/api/v1/token/getcsrf'
-    const response = await fetch(url,{
-        method: 'GET',
-        credentials: 'include',
-    })
-    const data = await response.json()
-    return data
-}
-
-async function donatedFetch(ownedId, csrf){
-    const url = new URL ('http://127.0.0.1:8000/api/v1/books/donated')
-    const formData = new FormData()
-    formData.append('owned_id', ownedId)
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'accept': 'application/json',
-            'X-CSRFToken': csrf,
-        },
-        body: formData,
-        credentials: 'include',
-    })
-
-    if (response.ok){
-        return true
+const propsLibrary = defineProps({
+    message : {
+        type: String,
+        default : ''
     }
-    else {
-        return false;
-    }
-}
-
-const router = useRouter()
-const stateReturned = ref(true)
-
-const emitModal = defineEmits(['update:stateReturned']);
-const props = defineProps({
-    detailsBook: {
-        type : Object,
-        default : () => ({
-            title: '',
-            author: '',
-            publisher: '',
-            ownedId: '',
-        })
-    },
-});
-
-async function donated(){
-    const csrf = await generateCsrf()
-    const result = await donatedFetch(props.detailsBook.ownedId, csrf.csrfToken)
-    if (result){
-        stateReturned.value = true;
-        router.push({path:router.currentRoute.value.path}).then(() => {
-            window.location.reload()
-        })
-    }
-    stateReturned.value = false;
-    emitModal('update:stateReturned', stateReturned.value)
-}
-
-function close(){
-    stateReturned.value = false;
-    emitModal('update:stateReturned', stateReturned.value)
-}
-
+})
 
 </script>
+
 
 <template>
     <div class="main-container">
         <div class="modal-container">
             <div class="modal-details">
-                Are you sure you want to Donate "{{ props.detailsBook.title }}" from your owned library?
+                {{ propsLibrary.message }}
             </div>
             <div class="modal-details">
-                <button class="modal-buttons" id="close-button" @click="close">Close</button>
-                <button class="modal-buttons" id="returned-button" @click="donated">Donate</button>
+                <!-- <button class="modal-buttons" id="close-button" @click="close">Close</button>
+                <button class="modal-buttons" id="returned-button" @click="donated">Donate</button> -->
             </div>
         </div>
     </div>
@@ -90,6 +27,8 @@ function close(){
 
 
 <style scoped>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+
     .main-container {
         position: absolute;
         color: black;
@@ -101,6 +40,7 @@ function close(){
         justify-content: center;
         align-items: center;
         background-color: rgba(0, 0, 0, 0.5);
+        font-family: 'Playfair Display', serif;
     }
 
     .modal-container {

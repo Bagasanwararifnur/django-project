@@ -1,11 +1,21 @@
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+const inputSearch = ref('');
+
+function searchHandle(){
+    const path = router.currentRoute.value.path
+    router.push({ path: path, query:{ valueSearch:inputSearch.value }})
+}
 
 </script>
 
 <template>
     <div class="searchbar-container">
-        <input type="text" placeholder="Search..." class="input-searchbar">
-        <button class="input-searchbar">Search</button>
+        <input type="text" placeholder="Search..." class="input-searchbar" v-model="inputSearch">
+        <button class="input-searchbar" @click="searchHandle">Search</button>
     </div>
 </template>
 

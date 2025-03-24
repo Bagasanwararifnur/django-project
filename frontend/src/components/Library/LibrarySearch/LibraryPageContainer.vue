@@ -7,16 +7,34 @@ import { mdiSkipForward } from '@mdi/js';
 import { mdiSkipPrevious } from '@mdi/js';
 import { mdiSkipBackward } from '@mdi/js';
 
+async function getData(modeSearch, valueSearch, paginationShown) {
+    const url = new URL('http://127.0.0.1:8000/api/v1/books/list');
+    url.searchParams.append('modeSearch',modeSearch);
+    url.searchParams.append('valueSearch', valueSearch);
+    url.searchParams.append('paginationShown', paginationShown);
+
+    const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+    }});
+
+    if (response.ok){
+        const result = await response.json()
+        return result
+    }
+    else {
+        console.error('Error:', response.status)
+    }
+}
+
 const router = useRouter()
 const Mode = router.currentRoute.value.query.modeSearch
 const valueSearch = router.currentRoute.value.query.valueSearch
 
-const listBook = ref([
-    { 'img' : "src/assets/dthbwjxghkyjxa8b2e8y9j.avif", 'author' : "Jules Verne", 'name' : "Twenty Thousand Under the Sea", 'publisher':'Kepustakaan Populer Gramedia'},
-    { 'img' : "/src/assets/ximeinii9y.avif", 'author' : "Jules Verne", 'name' : "Pulau Misterius", 'publisher':'Kepustakaan Populer Gramedia'},
-])
+const listBook = ref()
 // const numberPagination = ref(Math.floor(listBook.value.length/10+1))
-const numberPagination = ref(10)
+const numberPagination = ref()
 const paginationShown = ref()
 
 if (router.currentRoute.value.query.paginationShown === undefined){
@@ -24,9 +42,6 @@ if (router.currentRoute.value.query.paginationShown === undefined){
 }else{
     paginationShown.value = parseInt(router.currentRoute.value.query.paginationShown)
 }
-
-const stateReturnedModal = ref(false)
-const details = ref()
 
 const iconSkipNext = ref(mdiSkipNext)
 const iconSkipForward = ref(mdiSkipForward)
@@ -38,17 +53,28 @@ const pathSkipForward = iconSkipForward.value
 const pathSkipPrevious = iconSkipPrevious.value
 const pathSkipBackward = iconSkipBackward.value
 
-onMounted(() =>{
+onMounted( async() =>{
+    const fetchResult = await getData(Mode, valueSearch, paginationShown.value)
+    listBook.value = fetchResult.listBook
+    numberPagination.value = fetchResult.number
+
     const buttonNext = document.querySelector("#next-button")
     const buttonLast = document.querySelector("#last-button")
     const buttonPrev = document.querySelector("#previous-button")
     const buttonFirst = document.querySelector("#first-button")
 
-    if(paginationShown.value === 1){
+    if(paginationShown.value === 1 && paginationShown.value === numberPagination.value){
+        buttonPrev.disabled = true
+        buttonFirst.disabled = true
+        buttonNext.disabled = true
+        buttonLast.disabled = true
+    }
+    else if(paginationShown.value === 1 && numberPagination.value !== 1){
         buttonPrev.disabled = true
         buttonFirst.disabled = true
         buttonNext.disabled = false
         buttonLast.disabled = false
+        
     }
     else if(paginationShown.value === numberPagination.value){
         buttonNext.disabled = true
@@ -62,30 +88,32 @@ onMounted(() =>{
         buttonPrev.disabled = false
         buttonFirst.disabled = false
     }
-    console.log('pindah')
 })
 
 
 function firstPage(){
+    if (paginationShown.value === 1) return
     paginationShown.value = 1
     router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function lastPage(){
+    if (paginationShown.value === numberPagination.value) return
     paginationShown.value = numberPagination.value
     router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function nextPage(){
+    if (paginationShown.value === numberPagination.value) return
     paginationShown.value++
     router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
 
 function previousPage(){
+    if (paginationShown.value === 1) return
     paginationShown.value--
     router.push({ path: '/library-search', query: { modeSearch: Mode, valueSearch: valueSearch , paginationShown: paginationShown.value}});
 }
-
 
 </script>
 
@@ -96,13 +124,13 @@ function previousPage(){
 
                     <div class="item-container">
 
-                        <router-link :to="'book-details-library/'+book.name" class="book-item" v-for="(book,index) in listBook" ref="index">
+                        <router-link :to="'book-details-library/'+book.id" class="book-item" v-for="(book,index) in listBook" ref="index">
                             <div class="book-item-details">
-                                <img :src="book.img" alt="Book Cover">
+                                <img :src="'http://127.0.0.1:8000/'+book.cover" alt="Book Cover">
                             </div>
                             <div class="book-item-details">
                                 <div id="book-detail-author" class="book-informations">{{ book.author }}</div>
-                                <div id="book-detail-title" class="book-informations">{{ book.name }}</div>
+                                <div id="book-detail-title" class="book-informations">{{ book.title }}</div>
                                 <div id="book-detail-publisher" class="book-informations">{{ book.publisher }}</div>
                             </div>
                         </router-link>
@@ -157,10 +185,10 @@ function previousPage(){
         width: 95%;
         height: 95%;
         display: grid;
-        grid-template-columns: repeat(5,auto);
-        grid-template-rows: repeat(2,auto);
-        justify-items: center;
-        align-items: center;
+        grid-template-columns: repeat(5,1fr);
+        grid-template-rows: repeat(2,1fr);
+        /* justify-items: center; */
+        /* align-items: center; */
     }
 
     .item-booklist-container:last-child{
