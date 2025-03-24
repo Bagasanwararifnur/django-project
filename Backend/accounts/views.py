@@ -31,6 +31,8 @@ from.serializers import *
 def create_account(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
+        if len(serializer.data['password']) < 5:
+            return Response({'error': 'Password must be at least 5 characters long'}, status=status.HTTP_400_BAD_REQUEST)
         # serializer.save()
         serializer_response = CustomUserSerializerGet(data=serializer.data)
         if serializer_response.is_valid():
@@ -43,7 +45,7 @@ def create_account(request):
     tags=['Accounts'],
     manual_parameters=[
         openapi.Parameter('username', openapi.IN_FORM, type=openapi.TYPE_STRING),
-        openapi.Parameter('password', openapi.IN_FORM, type=openapi.TYPE_STRING),
+        openapi.Parameter('password', openapi.IN_FORM, type=openapi.TYPE_STRING, format=openapi.FORMAT_PASSWORD),
     ]
 )
 @api_view(['POST'])
@@ -118,8 +120,8 @@ def send_email_test(request):
     tags=['Accounts'],
     operation_id='Change Password',
     manual_parameters=[
-        openapi.Parameter('old_password', openapi.IN_FORM, type=openapi.TYPE_STRING),
-        openapi.Parameter('new_password', openapi.IN_FORM, type=openapi.TYPE_STRING),
+        openapi.Parameter('old_password', openapi.IN_FORM, type=openapi.TYPE_STRING, format=openapi.FORMAT_PASSWORD),
+        openapi.Parameter('new_password', openapi.IN_FORM, type=openapi.TYPE_STRING, format=openapi.FORMAT_PASSWORD),
     ]
 )
 @api_view(['POST'])
@@ -129,6 +131,10 @@ def change_password(request):
         old_password = request.data.get('old_password')
         new_password = request.data.get('new_password')
         if request.user.check_password(old_password):
+            if old_password == new_password:
+                return Response('New password cannot be the same as old password', status=status.HTTP_400_BAD_REQUEST)
+            elif len(new_password) < 5 :
+                return Response('Password must be at least 5 characters long', status=status.HTTP_400_BAD_REQUEST)
             request.user.set_password(new_password)
             request.user.save()
             return Response('Password changed successfully', status=status.HTTP_200_OK)
