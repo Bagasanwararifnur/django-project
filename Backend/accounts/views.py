@@ -5,9 +5,12 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from django.conf import settings
-
+from django.template import loader
+from django.utils.html import strip_tags
+from django.http import HttpResponse
 from drf_yasg import openapi 
 from drf_yasg.utils import swagger_auto_schema
+from premailer import transform
 from datetime import timedelta
 from.models import *
 from.serializers import *
@@ -33,7 +36,7 @@ def create_account(request):
     if serializer.is_valid():
         if len(serializer.data['password']) < 5:
             return Response({'error': 'Password must be at least 5 characters long'}, status=status.HTTP_400_BAD_REQUEST)
-        # serializer.save()
+        serializer.save()
         serializer_response = CustomUserSerializerGet(data=serializer.data)
         if serializer_response.is_valid():
             return Response(serializer_response.data, status=status.HTTP_201_CREATED)
@@ -203,9 +206,42 @@ def change_password_forgot_password(request):
     except ForgotPassword.DoesNotExist:
         return Response('Token not found or expired', status=status.HTTP_400_BAD_REQUEST)
     return Response('Invalid Process', status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def email_page(request):
+    template = loader.get_template('email.html')
+    context = {}
+    return HttpResponse(template.render(context,request))
    
 
-
+#Test Email Template
+@swagger_auto_schema(
+    method='post',
+    tags=['Accounts'],
+    operation_id='Test Template',
+    manual_parameters=[
+        openapi.Parameter('email', openapi.IN_FORM, type=openapi.TYPE_STRING),
+    ]
+)
+@api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
+def template_email(request):
+    email = request.data.get('email')
+    user = CustomUser.objects.filter(email=email).first()
+    if user:
+        message_template = loader.render_to_string('email.html',{})
+        message_template = transform(message_template)
+        message_plain = strip_tags(message_template)
+        send_mail(
+            'Password Reset (Test Django)',
+            message_plain,
+            f'{settings.EMAIL_HOST_USER}',
+            [email],
+            fail_silently=False,
+            html_message=message_template,
+        )
+        return Response('Email Has been send',status=status.HTTP_200_OK)
+    return Response('User not found', status=status.HTTP_404_NOT_FOUND)
         
 
 

@@ -3,21 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Signika:wght@300..700&display=swap" rel="stylesheet">
     <title>Html File</title>
 </head>
-<body>
-    <h1>Welcome to my website!</h1>
-    <p>This is a basic HTML document.</p>
-    <h2>My Favorite Colors:</h2>
-    <ul>
-        <li>Red</li>
-        <li>Green</li>
-        <li>Blue</li>
-    </ul>
-    <img src="https://example.com/image.jpg" alt="Example Image">
-    <a href="https://www.example.com">Visit Example Website</a>
-    <footer>
-        &copy; 2022 My Website. All rights reserved.
-    </footer>
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; box-sizing: border-box; padding: 0px; margin: 0px;">
+    <div class="main-container" style="width: 50%; display: grid; grid-template-rows: 4em 20em 15em; box-sizing: border-box;">
+        <div class="sub-container" style="font-family: 'Signika', sans-serif; font-weight: 400; display: flex; justify-content: center; align-items: center;">
+            You Receive this Email because our system detected account created request by this Email Account.
+        </div>
+        <div class="sub-container" style="background-color: black; display: flex; justify-content: center; align-items: center;">
+            <div class="sub-banner-container" style="height: 70%; width: 60%; color: white; display: grid; grid-template-rows: 8fr 1fr;">
+                <div id="text-banner" style="display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 35pt; text-align: center; font-family: 'Signika', sans-serif">
+                    Welcome to LibraVerse. Please Verify your Account
+                </div>
+                <div id="button-banner" style="display: flex; justify-content: center; align-items: center;">
+                    <button style="padding: 0px; margin: 0px; width: 30%; height: 40px; border-radius: 20px; font-family: 'Signika', sans-serif; font-weight: 600; font-size: 15pt; cursor: pointer; transition: 0.5s; border: none;">Verify</button>
+                </div>
+            </div>
+        </div>
+        <div class="sub-container" style="display: grid; grid-template-columns: 1fr 1.5fr;">
+            <div id="decorations" style="background-image: url('/static/pattern2.jpg'); background-repeat: repeat; background-size: 50%;"></div>
+            <div id="greetings" style="display: flex; justify-content: center; align-items: center;">
+                <div class="greetings-main-container" style="display: grid; height: fit-content; width: 60%; gap: 10px;">
+                    <div class="greetings-container" style="font-weight: 600; font-size: 25pt; font-family: 'Signika', sans-serif">Lets verify your account</div>
+                    <div class="greetings-container" style="font-weight: 400; font-size: 12pt; text-align: justify; font-family: 'Signika', sans-serif">
+                        Welcome to LibraVerse! Verify your account today and unlock access to countless books from around the world. Dive into new knowledge, discover exciting stories, and start your reading adventure now!
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
 </body>
 </html>

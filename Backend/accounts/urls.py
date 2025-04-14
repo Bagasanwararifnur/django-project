@@ -10,4 +10,6 @@ urlpatterns =[
     path('accounts/forgot_password',forgot_password,name='forgot_password'),
     path('accounts/reset_password', change_password_forgot_password, name='reset_password'),
     path('accounts/logout', logout_account, name='logout_account'),
+    path('accounts/email_page', email_page, name='email_page'),
+    path('accounts/template_email', template_email, name='template_email')
 ]

@@ -1,0 +1,122 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 0px;
+    margin: 0px;
+}
+.main-container {
+    /* border: 2px solid black; */
+    width: 50%;
+    display: grid;
+    grid-template-rows: 4em 20em 15em;
+    box-sizing: border-box;
+}
+
+.sub-container {
+    font-family: "Signika", sans-serif;
+    font-weight: 400;
+    /* border: 1px solid black; */
+    /* height: 5em; */
+}
+
+.sub-container:first-child{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sub-container:nth-child(2){
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sub-banner-container{
+    /* border: 2px solid white; */
+    height: 70%;
+    width: 60%;
+    color: white;
+    display: grid;
+    grid-template-rows: 8fr 1fr;
+}
+
+.sub-banner-container *{
+    /* border: 2px solid white; */
+}
+
+#text-banner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 35pt;
+    text-align: center;
+}
+
+#button-banner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button{
+    padding: 0px;
+    margin: 0px;
+    width: 30%;
+    height: 40px;
+    border-radius: 20px;
+    font-family: "Signika", sans-serif;
+    font-weight: 600;
+    font-size: 15pt;
+    cursor: pointer;
+    transition: 0.5s;
+    border: none;
+}
+
+button:hover{
+    background-color: #616161;
+    color: white;
+    transition: 0.5s;
+}
+
+.sub-container:last-child{
+    /* border: 2px solid black; */
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+}
+
+
+#decorations{
+    background-image: url('/static/pattern2.jpg');
+    background-repeat: repeat;   /* Agar gambar terulang */
+    background-size: 50%;
+}
+
+#greetings{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.greetings-main-container{
+    display: grid;
+    /* border: 2px solid black; */
+    height: fit-content;
+    width: 60%;
+    gap: 10px;
+}
+
+.greetings-container:first-child{
+    font-weight: 600;
+    font-size: 25pt;
+}
+
+.greetings-container:last-child{
+    font-weight: 400;
+    font-size: 12pt;
+    text-align: justify;
+}
